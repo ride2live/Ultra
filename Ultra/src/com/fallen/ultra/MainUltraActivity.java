@@ -1,22 +1,32 @@
 package com.fallen.ultra;
 
-import com.example.ultra.R;
-import com.fallen.ultra.UltraPlayerService.LocalPlayerBinder;
-
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 
-public class MainUltraActivity extends Activity implements TabChangeListener {
+import com.example.ultra.R;
+import com.fallen.ultra.UltraPlayerService.LocalPlayerBinder;
+
+public class MainUltraActivity extends FragmentActivity implements
+		TabChangeListener, PlayerFragmentCallback, ServiceCallback {
 	android.app.ActionBar actionTabsBar;
 	private ServiceConnection servCon;
 	private UltraPlayerService playerService;
+	ViewPager pager;
+	private boolean isServiceBinded = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +34,8 @@ public class MainUltraActivity extends Activity implements TabChangeListener {
 		setContentView(R.layout.activity_main_ultra);
 		actionTabsBar = getActionBar();
 		actionTabsBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		
+		pager = (ViewPager) findViewById(R.id.pager);
+		pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
 		TabsCreator.buildActionBar(actionTabsBar, this);
 
 	}
@@ -38,7 +49,7 @@ public class MainUltraActivity extends Activity implements TabChangeListener {
 				UltraPlayerService.class);
 		bindService(intent, servCon, Context.BIND_AUTO_CREATE);
 		startService(intent);
-		
+
 		super.onResume();
 	}
 
@@ -49,18 +60,23 @@ public class MainUltraActivity extends Activity implements TabChangeListener {
 			@Override
 			public void onServiceDisconnected(ComponentName name) {
 				// TODO Auto-generated method stub
-				System.out.println ("onServiceDisconnected");
+				System.out.println("onServiceDisconnected");
+				isServiceBinded = false;
+				playerService.setCallback(null);
+				
 			}
 
 			@Override
 			public void onServiceConnected(ComponentName name, IBinder service) {
 				// TODO Auto-generated method stub
 				playerService = ((LocalPlayerBinder) service).getService();
-				 
-				System.out.println ("onServiceConnected");
+				isServiceBinded = true;
+				playerService.setCallback(MainUltraActivity.this);
+				System.out.println("onServiceConnected");
 			}
 		};
 	}
+
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
@@ -71,30 +87,65 @@ public class MainUltraActivity extends Activity implements TabChangeListener {
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
-		//playerService.unbindService(servCon);
-		System.out.println ("Activity onStop");
+		// playerService.unbindService(servCon);
+		System.out.println("Activity onStop");
 		super.onStop();
 	}
+
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		System.out.println ("Activity onDestr");
+		System.out.println("Activity onDestr");
 		super.onDestroy();
 	}
+
 	@Override
 	public void pageChanged(int position) {
 		// TODO Auto-generated method stub
 
 	}
-	public void start (View V)
-	{
+
+	public void start() {
 		playerService.playStream();
 		this.finish();
 	}
-	public void stop (View V)
-	{
-		playerService.stopPlayStream();
+
+	public void stop() {
+		playerService.stopStream();
+	}
+
+	@Override
+	public void buttonClicked(Bundle bundle) {
+		// TODO Auto-generated method stub
+		sendToService(bundle);
+
+	}
+
+	private void sendToService(Bundle bundle) {
+		// TODO Auto-generated method stub
+		if (playerService == null || servCon == null || !isServiceBinded) {
+			Log.e("ultraerr", "MainActivity cantfind service");
+		} else if (bundle != null && bundle.getInt(Params.KEY_ACTION, -1) != -1) {
+			switch (bundle.getInt(Params.KEY_ACTION, -1)) {
+			case Params.BUTTON_START_KEY:
+				start();
+				break;
+			case Params.BUTTON_STOP_KEY:
+				stop();
+				break;
+			default:
+				Log.e("ultraerr", "MainUltraActivity wrong id");
+				break;
+			}
+
+		}
+	}
+
+	@Override
+	public void unbindService() {
+		// TODO Auto-generated method stub
+		if (isServiceBinded)
+			playerService.unbindService(servCon);
 	}
 
 }
-

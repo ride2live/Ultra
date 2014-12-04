@@ -15,7 +15,8 @@ public class UltraPlayerService extends Service {
 	private NotificationManager mNotificationManager;
 	private MediaPlayer mp;
 	private final IBinder mBinder = new LocalPlayerBinder();
-
+	Notification notifytoremove;
+	ServiceCallback mServiceCallback;
 	public UltraPlayerService() {
 
 	}
@@ -46,7 +47,7 @@ public class UltraPlayerService extends Service {
 				playStream();
 				break;
 			case Params.FLAG_STOP:
-				stopPlayStream();
+				stopStream();
 				break;
 			default:
 				break;
@@ -60,6 +61,7 @@ public class UltraPlayerService extends Service {
 		if (mp != null && mp.isPlaying())
 			return; //do nothing
 		try {
+			
 			mp = MediaPlayer.create(getApplicationContext(),
 					Uri.parse("http://94.25.53.133:80/ultra-128.mp3"));
 			mp.start();
@@ -91,20 +93,24 @@ public class UltraPlayerService extends Service {
 
 	private void showNotify(Notification playerNotification) {
 		startForeground(Params.NOTIFICATION_ID, playerNotification);
+		
 	}
 
 	private void updateNotify(ContentValues cv) {
 		
 	}
 
-	private void removeNotufy() {
-		
-		mNotificationManager.cancel(Params.NOTIFICATION_ID);
+	private void removeNotify() {
+		//mNotificationManager.cancel(Params.NOTIFICATION_ID);
+		stopForeground(true);
+//		if (mServiceCallback!=null)
+//			mServiceCallback.unbindService();
+//		
 	}
 
-	void stopPlayStream() {
+	void stopStream() {
 		mp.stop();
-		removeNotufy();
+		removeNotify();
 
 	}
 
@@ -127,6 +133,10 @@ public class UltraPlayerService extends Service {
 		// TODO Auto-generated method stub
 		System.out.println("onDestroy");
 		super.onDestroy();
+	}
+	public void setCallback(ServiceCallback serviceCallback) {
+		// TODO Auto-generated method stub
+		this.mServiceCallback =serviceCallback;
 	}
 
 }

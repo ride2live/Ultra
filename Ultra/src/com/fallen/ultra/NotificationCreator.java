@@ -14,7 +14,7 @@ public abstract class NotificationCreator {
 
 	public static Notification createPlayerNotification(Context context, String packageName ) {
 		// TODO Auto-generated method stub
-		NotificationCompat.Builder notificationBuilder = new Builder(context);
+		
 		Intent resultIntent = new Intent(context, MainUltraActivity.class);
 		RemoteViews playbackControls= new RemoteViews(packageName,R.layout.playback_controls);
 		Intent startStreamIntent = new Intent(context, UltraPlayerService.class);
@@ -29,9 +29,11 @@ public abstract class NotificationCreator {
 		
 		playbackControls.setOnClickPendingIntent(R.id.startButton, startPendingIntent);
 		playbackControls.setOnClickPendingIntent(R.id.stopButton, stopPendingIntent);
+		NotificationCompat.Builder notificationBuilder = new Builder(context);
 		notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
 		notificationBuilder.setContent(playbackControls);
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 123, resultIntent, 0);
+		notificationBuilder.setAutoCancel(true);
 		notificationBuilder.setContentIntent(resultPendingIntent);
 		return notificationBuilder.build();
 	}
