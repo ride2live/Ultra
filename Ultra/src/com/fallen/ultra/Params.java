@@ -11,5 +11,7 @@ public class Params {
 	public static final int BUTTON_START_KEY = 200;
 	public static final int BUTTON_STOP_KEY = 201;
 	public static final String KEY_ACTION = "action";
+	public static final String ICY_KEY = "icy-metaint";
 
+	
 }

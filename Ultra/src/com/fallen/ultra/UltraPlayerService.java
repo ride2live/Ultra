@@ -11,12 +11,13 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 
-public class UltraPlayerService extends Service {
+public class UltraPlayerService extends Service implements AsyncLoadStreamCallback  {
 	private NotificationManager mNotificationManager;
 	private MediaPlayer mp;
 	private final IBinder mBinder = new LocalPlayerBinder();
 	Notification notifytoremove;
 	ServiceCallback mServiceCallback;
+	AsyncLoadStream als;
 	public UltraPlayerService() {
 
 	}
@@ -58,20 +59,8 @@ public class UltraPlayerService extends Service {
 	}
 
 	void playStream() {
-		if (mp != null && mp.isPlaying())
-			return; //do nothing
-		try {
-			
-			mp = MediaPlayer.create(getApplicationContext(),
-					Uri.parse("http://94.25.53.133:80/ultra-128.mp3"));
-			mp.start();
-			if (mp.isPlaying())
-				createNotify();
-
-		} catch (Exception e) {
-			// TODO: handle exception
-
-		}
+		als = new AsyncLoadStream(this);
+		als.execute("http://94.25.53.133:80/ultra-128.mp3");
 
 	}
 
@@ -103,13 +92,16 @@ public class UltraPlayerService extends Service {
 	private void removeNotify() {
 		//mNotificationManager.cancel(Params.NOTIFICATION_ID);
 		stopForeground(true);
+		stopSelf();
 //		if (mServiceCallback!=null)
 //			mServiceCallback.unbindService();
 //		
 	}
 
 	void stopStream() {
+		if (mp!=null)
 		mp.stop();
+		als.cancel(true);
 		removeNotify();
 
 	}
@@ -117,26 +109,45 @@ public class UltraPlayerService extends Service {
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
-		System.out.println("onCreate");
+		System.out.println("onCreateService");
 		super.onCreate();
 	}
+	
 
 	@Override
 	public boolean onUnbind(Intent intent) {
 		// TODO Auto-generated method stub
-		System.out.println("onUnbind");
+		System.out.println("onUnbindService");
 		return super.onUnbind(intent);
 	}
 
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
-		System.out.println("onDestroy");
+		System.out.println("onDestroyService");
 		super.onDestroy();
 	}
 	public void setCallback(ServiceCallback serviceCallback) {
 		// TODO Auto-generated method stub
 		this.mServiceCallback =serviceCallback;
+	}
+
+	@Override
+	public void onBuffered() {
+		// TODO Auto-generated method stub
+		if (mp != null && mp.isPlaying())
+			return; //do nothing
+		try {
+			mp = MediaPlayer.create(getApplicationContext(),
+					Uri.parse(UtilsUltra.getTestFileToWrite().getAbsolutePath()));
+			mp.start();
+			if (mp.isPlaying())
+				createNotify();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+
+		}
 	}
 
 }

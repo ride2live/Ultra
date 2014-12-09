@@ -107,7 +107,7 @@ public class MainUltraActivity extends FragmentActivity implements
 
 	public void start() {
 		playerService.playStream();
-		this.finish();
+		//this.finish();
 	}
 
 	public void stop() {
