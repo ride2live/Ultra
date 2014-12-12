@@ -12,6 +12,13 @@ public class Params {
 	public static final int BUTTON_STOP_KEY = 201;
 	public static final String KEY_ACTION = "action";
 	public static final String ICY_KEY = "icy-metaint";
-
-	
+	public static final String SOCKET_PORT = "8889";
+	public static final String LOCAL_SOCKET_STREAM_IP = "http://127.0.0.1:" + SOCKET_PORT;
+	public static final String ACTION_SOCKET_PREACCEPT_DELAY = "socket will be ready soon";
+	public static final String ACTION_BUFFERED = "buffered";
+	public static final int NO_METAINT = -1;
+	public static final int BUFFER_FOR_PLAYER_IN_BYTES = 200000;
+	public static final String DEFAULT_LOG_TYPE = "ultraTag";
+	public static final int DEFAULT_INPUTSTREAM_BUFFER_BYTES = 1024;
+	public static final int ASYNC_ACTION_PLAY_STREAM = 300;
 }

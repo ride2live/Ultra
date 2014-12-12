@@ -11,20 +11,21 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 
-public class UltraPlayerService extends Service implements AsyncLoadStreamCallback  {
+public class UltraPlayerService extends Service implements
+		AsyncLoadStreamCallback {
 	private NotificationManager mNotificationManager;
 	private MediaPlayer mp;
 	private final IBinder mBinder = new LocalPlayerBinder();
 	Notification notifytoremove;
 	ServiceCallback mServiceCallback;
 	AsyncLoadStream als;
+
 	public UltraPlayerService() {
 
 	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 
 		return mBinder;
 	}
@@ -40,7 +41,8 @@ public class UltraPlayerService extends Service implements AsyncLoadStreamCallba
 		// Bundle notificationInfo =
 		// intent.getBundleExtra("NOTIFICATION_BUNDLE");
 		String intentAction = intent.getAction();
-		if (intentAction != null && intentAction.equals(Params.ACTION_FROM_NOTIFIER_KEY)) {
+		if (intentAction != null
+				&& intentAction.equals(Params.ACTION_FROM_NOTIFIER_KEY)) {
 			int flagToAction = intent.getIntExtra(Params.KEY_PLAY, 0);
 			// .getInt(Params.ACTION_FROM_NOTIFIER_KEY);
 			switch (flagToAction) {
@@ -59,7 +61,7 @@ public class UltraPlayerService extends Service implements AsyncLoadStreamCallba
 	}
 
 	void playStream() {
-		als = new AsyncLoadStream(this);
+		als = new AsyncLoadStream(this, Params.ASYNC_ACTION_PLAY_STREAM);
 		als.execute("http://94.25.53.133:80/ultra-128.mp3");
 
 	}
@@ -67,7 +69,7 @@ public class UltraPlayerService extends Service implements AsyncLoadStreamCallba
 	private void createNotify() {
 		if (mNotificationManager == null)
 			mNotificationManager = createNotificationManager();
-		
+
 		Notification playerNotification = NotificationCreator
 				.createPlayerNotification(getApplicationContext(),
 						getPackageName());
@@ -75,32 +77,32 @@ public class UltraPlayerService extends Service implements AsyncLoadStreamCallba
 	}
 
 	private NotificationManager createNotificationManager() {
-		// TODO Auto-generated method stub
-		return  (NotificationManager) getApplicationContext()
-				.getSystemService(Context.NOTIFICATION_SERVICE);
+
+		return (NotificationManager) getApplicationContext().getSystemService(
+				Context.NOTIFICATION_SERVICE);
 	}
 
 	private void showNotify(Notification playerNotification) {
 		startForeground(Params.NOTIFICATION_ID, playerNotification);
-		
+
 	}
 
 	private void updateNotify(ContentValues cv) {
-		
+
 	}
 
-	private void removeNotify() {
-		//mNotificationManager.cancel(Params.NOTIFICATION_ID);
+	private void removeNotify() { // stopped service will close notify
 		stopForeground(true);
 		stopSelf();
-//		if (mServiceCallback!=null)
-//			mServiceCallback.unbindService();
-//		
 	}
 
 	void stopStream() {
-		if (mp!=null)
-		mp.stop();
+		if (mp != null) {
+
+			mp.stop();
+			mp.release();
+			mp = null;
+		}
 		als.cancel(true);
 		removeNotify();
 
@@ -108,46 +110,57 @@ public class UltraPlayerService extends Service implements AsyncLoadStreamCallba
 
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
+
 		System.out.println("onCreateService");
 		super.onCreate();
 	}
-	
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		// TODO Auto-generated method stub
+
 		System.out.println("onUnbindService");
 		return super.onUnbind(intent);
 	}
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
+
 		System.out.println("onDestroyService");
 		super.onDestroy();
 	}
+
 	public void setCallback(ServiceCallback serviceCallback) {
-		// TODO Auto-generated method stub
-		this.mServiceCallback =serviceCallback;
+
+		this.mServiceCallback = serviceCallback;
 	}
 
 	@Override
 	public void onBuffered() {
-		// TODO Auto-generated method stub
+
+		mp.start();
+		if (mp.isPlaying())
+			createNotify();
+	}
+
+	@Override
+	public void onSocketStrart() {
 		if (mp != null && mp.isPlaying())
-			return; //do nothing
+			return; // do nothing, already playing
 		try {
 			mp = MediaPlayer.create(getApplicationContext(),
-					Uri.parse(UtilsUltra.getTestFileToWrite().getAbsolutePath()));
-			mp.start();
-			if (mp.isPlaying())
-				createNotify();
+					Uri.parse(Params.LOCAL_SOCKET_STREAM_IP));
 
 		} catch (Exception e) {
-			// TODO: handle exception
-
+			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void onNewStreamTitleRetrieved(String stringTitle) {
+		
+		updateNotify(UtilsUltra.createBundleWithMetadata(stringTitle));
+	}
+
+
 
 }
