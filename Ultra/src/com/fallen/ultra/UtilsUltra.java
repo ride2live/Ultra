@@ -59,7 +59,32 @@ public abstract class UtilsUltra {
 	
 	public static ContentValues createBundleWithMetadata(String stringTitle) {
 		// TODO Auto-generated method stub
-		return null;
+		if (!(stringTitle.contains(Params.STREAM_TITLE_KEYWORD)&& stringTitle.contains("'")))
+			return null;
+		else
+		{
+			ContentValues trackinfo = new ContentValues();
+			stringTitle = stringTitle.replace(Params.STREAM_TITLE_KEYWORD, "");
+			if (!(stringTitle.startsWith("='")&&stringTitle.lastIndexOf("'")>1)&&stringTitle.contains(" - "))
+			{
+				trackinfo.put(Params.TRACK_ARTIST_KEY, "");
+				trackinfo.put(Params.TRACK_SONG_KEY, stringTitle);
+				return trackinfo;	
+			}
+			else
+			{
+				stringTitle = stringTitle.substring(2, stringTitle.lastIndexOf("'"));
+				String[] parts = stringTitle.split(" - ");
+				String artist = parts[0]; 
+				String trackName = parts[1];
+				trackinfo.put(Params.TRACK_ARTIST_KEY, artist);
+				trackinfo.put(Params.TRACK_SONG_KEY, trackName);
+				return trackinfo;
+				
+			}
+		
+		}
+		
 	}
 
 }

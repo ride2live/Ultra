@@ -21,4 +21,7 @@ public class Params {
 	public static final String DEFAULT_LOG_TYPE = "ultraTag";
 	public static final int DEFAULT_INPUTSTREAM_BUFFER_BYTES = 1024;
 	public static final int ASYNC_ACTION_PLAY_STREAM = 300;
+	public static final CharSequence STREAM_TITLE_KEYWORD = "StreamTitle";
+	public static final String TRACK_ARTIST_KEY = "artist_key";
+	public static final String TRACK_SONG_KEY = "song_key";
 }

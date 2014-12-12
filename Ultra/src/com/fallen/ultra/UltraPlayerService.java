@@ -157,8 +157,8 @@ public class UltraPlayerService extends Service implements
 
 	@Override
 	public void onNewStreamTitleRetrieved(String stringTitle) {
-		
-		updateNotify(UtilsUltra.createBundleWithMetadata(stringTitle));
+		ContentValues cv = UtilsUltra.createBundleWithMetadata(stringTitle);
+		updateNotify(cv);
 	}
 
 

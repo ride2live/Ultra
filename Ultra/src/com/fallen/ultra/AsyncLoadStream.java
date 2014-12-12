@@ -84,6 +84,7 @@ public class AsyncLoadStream extends AsyncTask<String, String, Void> {
 						radioStream.read(metaDataBuffer);
 						String str = new String(metaDataBuffer, "UTF-8");
 						System.out.println(str);
+						streamCallback.onNewStreamTitleRetrieved(str);
 
 					}
 					bytePreIntSum = 0;
