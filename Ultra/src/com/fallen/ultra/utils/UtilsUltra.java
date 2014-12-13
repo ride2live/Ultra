@@ -62,7 +62,7 @@ public abstract class UtilsUltra {
 	public static ContentValues createBundleWithMetadata(String stringTitle) {
 		// TODO Auto-generated method stub
 		ContentValues trackinfo = new ContentValues();
-		if (!(stringTitle.contains(Params.STREAM_TITLE_KEYWORD)&& stringTitle.contains("'")))
+		if (!(stringTitle.contains(Params.STREAM_TITLE_KEYWORD) || stringTitle.contains("'")))
 		{
 			trackinfo.put(Params.TRACK_ARTIST_KEY, "");
 			trackinfo.put(Params.TRACK_SONG_KEY, Params.NO_TITLE);
@@ -73,7 +73,7 @@ public abstract class UtilsUltra {
 		{
 			
 			stringTitle = stringTitle.replace(Params.STREAM_TITLE_KEYWORD, "");
-			if (!(stringTitle.startsWith("='")|| stringTitle.lastIndexOf("'")>2 || stringTitle.contains(" - ")))
+			if (!(stringTitle.startsWith("='")|| stringTitle.lastIndexOf("'")<2 || stringTitle.contains(" - ")))
 			{
 				trackinfo.put(Params.TRACK_ARTIST_KEY, "");
 				trackinfo.put(Params.TRACK_SONG_KEY, stringTitle);
