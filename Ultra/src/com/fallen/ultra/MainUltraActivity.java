@@ -63,7 +63,7 @@ public class MainUltraActivity extends FragmentActivity implements
 				System.out.println("onServiceDisconnected");
 				isServiceBinded = false;
 				playerService.setCallback(null);
-				
+
 			}
 
 			@Override
@@ -105,28 +105,33 @@ public class MainUltraActivity extends FragmentActivity implements
 
 	}
 
+	//better rewrite and use intent
 	public void start() {
-		playerService.playStream();
-		//this.finish();
+		
+		//playerService.playStream();
+		// this.finish();
 	}
 
 	public void stop() {
 		playerService.stopStream();
 	}
 
+	//Only button click handle 
+	//if need addition info use another callback
 	@Override
-	public void buttonClicked(Bundle bundle) {
+	public void buttonClicked(int action) {
 		// TODO Auto-generated method stub
-		sendToService(bundle);
-
+		sendToService(action);
 	}
 
-	private void sendToService(Bundle bundle) {
+	private void sendToService(int action) {
 		// TODO Auto-generated method stub
 		if (playerService == null || servCon == null || !isServiceBinded) {
 			Log.e("ultraerr", "MainActivity cantfind service");
-		} else if (bundle != null && bundle.getInt(Params.KEY_ACTION, -1) != -1) {
-			switch (bundle.getInt(Params.KEY_ACTION, -1)) {
+		} 
+		else 
+		{
+			switch (action) {
 			case Params.BUTTON_START_KEY:
 				start();
 				break;

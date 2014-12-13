@@ -2,6 +2,7 @@ package com.fallen.ultra;
 
 import com.example.ultra.R;
 
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -9,27 +10,27 @@ import android.view.View.OnClickListener;
 
 public  class MyButtonClickListener implements OnClickListener{
 
-	private PlayerControlsListener onButtonClickListener;
-	public MyButtonClickListener(PlayerControlsListener onButtonClickListener) {
+	private UniversalFragmentButtonListener onButtonClickListener;
+	public MyButtonClickListener(UniversalFragmentButtonListener onButtonClickListener, FragmentActivity fragmentActivity) {
 		// TODO Auto-generated constructor stub
 		this.onButtonClickListener = onButtonClickListener;
 	}
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		int button_key_id = -1;
+		int action = Params.ACTION_WRONG;
 		switch (v.getId()) {
 		case R.id.startInFragment:
-			button_key_id  = Params.BUTTON_START_KEY;
+			action  = Params.BUTTON_START_KEY;
 			break;
 		case R.id.stopInFragment:
-			button_key_id  = Params.BUTTON_STOP_KEY;
+			action  = Params.BUTTON_STOP_KEY;
 			break;
 
 		default:
 			break;
 		}
-		onButtonClickListener.onButtonClicked(button_key_id);
+		onButtonClickListener.onButtonClicked(action);
 	}
 
 }

@@ -14,11 +14,12 @@ import android.os.IBinder;
 public class UltraPlayerService extends Service implements
 		AsyncLoadStreamCallback {
 	private NotificationManager mNotificationManager;
-	private MediaPlayer mp;
+	private MediaPlayer mMediaPlayer;
 	private final IBinder mBinder = new LocalPlayerBinder();
-	Notification notifytoremove;
 	ServiceCallback mServiceCallback;
-	AsyncLoadStream als;
+	AsyncLoadStream mAsycLoadStream;
+	String currentArtist;
+	String currentTrack;
 
 	public UltraPlayerService() {
 
@@ -61,8 +62,9 @@ public class UltraPlayerService extends Service implements
 	}
 
 	void playStream() {
-		als = new AsyncLoadStream(this, Params.ASYNC_ACTION_PLAY_STREAM);
-		als.execute("http://94.25.53.133:80/ultra-128.mp3");
+		mAsycLoadStream = new AsyncLoadStream(this,
+				Params.ASYNC_ACTION_PLAY_STREAM);
+		mAsycLoadStream.execute(Params.ULTRA_URL_HIGH);
 
 	}
 
@@ -72,7 +74,7 @@ public class UltraPlayerService extends Service implements
 
 		Notification playerNotification = NotificationCreator
 				.createPlayerNotification(getApplicationContext(),
-						getPackageName());
+						getPackageName(), currentArtist, currentTrack);
 		showNotify(playerNotification);
 	}
 
@@ -88,7 +90,13 @@ public class UltraPlayerService extends Service implements
 	}
 
 	private void updateNotify(ContentValues cv) {
-
+		currentArtist = cv.getAsString(Params.TRACK_ARTIST_KEY);
+		currentTrack = cv.getAsString(Params.TRACK_SONG_KEY);
+		if (mNotificationManager != null)
+			mNotificationManager.notify(Params.NOTIFICATION_ID,
+					NotificationCreator.createPlayerNotification(
+							getApplicationContext(), getPackageName(),
+							currentArtist, currentTrack));
 	}
 
 	private void removeNotify() { // stopped service will close notify
@@ -97,13 +105,13 @@ public class UltraPlayerService extends Service implements
 	}
 
 	void stopStream() {
-		if (mp != null) {
+		if (mMediaPlayer != null) {
 
-			mp.stop();
-			mp.release();
-			mp = null;
+			mMediaPlayer.stop();
+			mMediaPlayer.release();
+			mMediaPlayer = null;
 		}
-		als.cancel(true);
+		mAsycLoadStream.cancel(true);
 		removeNotify();
 
 	}
@@ -137,17 +145,17 @@ public class UltraPlayerService extends Service implements
 	@Override
 	public void onBuffered() {
 
-		mp.start();
-		if (mp.isPlaying())
+		mMediaPlayer.start();
+		if (mMediaPlayer.isPlaying())
 			createNotify();
 	}
 
 	@Override
 	public void onSocketStrart() {
-		if (mp != null && mp.isPlaying())
+		if (mMediaPlayer != null && mMediaPlayer.isPlaying())
 			return; // do nothing, already playing
 		try {
-			mp = MediaPlayer.create(getApplicationContext(),
+			mMediaPlayer = MediaPlayer.create(getApplicationContext(),
 					Uri.parse(Params.LOCAL_SOCKET_STREAM_IP));
 
 		} catch (Exception e) {
@@ -158,9 +166,8 @@ public class UltraPlayerService extends Service implements
 	@Override
 	public void onNewStreamTitleRetrieved(String stringTitle) {
 		ContentValues cv = UtilsUltra.createBundleWithMetadata(stringTitle);
+
 		updateNotify(cv);
 	}
-
-
 
 }

@@ -59,13 +59,19 @@ public abstract class UtilsUltra {
 	
 	public static ContentValues createBundleWithMetadata(String stringTitle) {
 		// TODO Auto-generated method stub
+		ContentValues trackinfo = new ContentValues();
 		if (!(stringTitle.contains(Params.STREAM_TITLE_KEYWORD)&& stringTitle.contains("'")))
-			return null;
+		{
+			trackinfo.put(Params.TRACK_ARTIST_KEY, "");
+			trackinfo.put(Params.TRACK_SONG_KEY, Params.NO_TITLE);
+			return trackinfo;	
+		}
+			
 		else
 		{
-			ContentValues trackinfo = new ContentValues();
+			
 			stringTitle = stringTitle.replace(Params.STREAM_TITLE_KEYWORD, "");
-			if (!(stringTitle.startsWith("='")&&stringTitle.lastIndexOf("'")>1)&&stringTitle.contains(" - "))
+			if (!(stringTitle.startsWith("='")&&stringTitle.lastIndexOf("'")>2 &&stringTitle.contains(" - ")))
 			{
 				trackinfo.put(Params.TRACK_ARTIST_KEY, "");
 				trackinfo.put(Params.TRACK_SONG_KEY, stringTitle);
@@ -73,13 +79,22 @@ public abstract class UtilsUltra {
 			}
 			else
 			{
+				try {
+					
+				
 				stringTitle = stringTitle.substring(2, stringTitle.lastIndexOf("'"));
 				String[] parts = stringTitle.split(" - ");
 				String artist = parts[0]; 
 				String trackName = parts[1];
 				trackinfo.put(Params.TRACK_ARTIST_KEY, artist);
 				trackinfo.put(Params.TRACK_SONG_KEY, trackName);
-				return trackinfo;
+					return trackinfo;
+				} catch (Exception e) {
+					// TODO: handle exception
+					trackinfo.put(Params.TRACK_ARTIST_KEY, "");
+					trackinfo.put(Params.TRACK_SONG_KEY, Params.NO_TITLE);
+					return trackinfo;	
+				}
 				
 			}
 		

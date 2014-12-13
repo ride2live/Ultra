@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.example.ultra.R;
 
-public class FragmentPlayer extends android.support.v4.app.Fragment implements PlayerControlsListener {
+public class FragmentPlayer extends android.support.v4.app.Fragment implements UniversalFragmentButtonListener {
 	PlayerFragmentCallback playerFragmentCallback;
 	
 	@Override
@@ -17,7 +17,7 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements P
 		playerFragmentCallback = (PlayerFragmentCallback) getActivity();
 		Button startButton = (Button) getView().findViewById(R.id.startInFragment);
 		Button stopButton = (Button) getView().findViewById(R.id.stopInFragment);
-		MyButtonClickListener buttonListener = new MyButtonClickListener(this);
+		MyButtonClickListener buttonListener = new MyButtonClickListener(this, getActivity());
 		startButton.setOnClickListener(buttonListener);
 		stopButton.setOnClickListener(buttonListener);
 		super.onActivityCreated(savedInstanceState);
@@ -29,18 +29,7 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements P
 		return inflater.inflate(R.layout.fragment_player, null);
 	}
 	@Override
-	public void onButtonClicked(int button_key_id) {
-		// TODO Auto-generated method stub
-		Bundle bundle = new Bundle();
-		bundle.putInt(Params.KEY_ACTION, button_key_id);
-//		switch (button_key_id) {
-//		case Params.BUTTON_START_KEY:
-//			bundle.
-//			break;
-//
-//		default:
-//			break;
-//		}
-		playerFragmentCallback.buttonClicked(bundle);
+	public void onButtonClicked(int actionToActivity) {
+		playerFragmentCallback.buttonClicked(actionToActivity);
 	}
 }

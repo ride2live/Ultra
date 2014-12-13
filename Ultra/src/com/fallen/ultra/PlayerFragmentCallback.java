@@ -4,5 +4,5 @@ import android.os.Bundle;
 
 public interface PlayerFragmentCallback {
 
-	void buttonClicked(Bundle bundle);
+	void buttonClicked(int buttonId);
 }
