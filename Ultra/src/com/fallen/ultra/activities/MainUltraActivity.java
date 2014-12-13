@@ -11,7 +11,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-import com.example.ultra.R;
+import com.fallen.ultra.R;
 import com.fallen.ultra.adapters.MyPagerAdapter;
 import com.fallen.ultra.callbacks.PlayerFragmentCallback;
 import com.fallen.ultra.callbacks.ServiceCallback;
@@ -87,8 +87,6 @@ public class MainUltraActivity extends FragmentActivity implements
 
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
-		// playerService.unbindService(servCon);
 		System.out.println("Activity onStop");
 		super.onStop();
 	}

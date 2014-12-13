@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.ultra.R;
+import com.fallen.ultra.R;
 import com.fallen.ultra.callbacks.PlayerFragmentCallback;
 import com.fallen.ultra.listeners.MyButtonClickListener;
 import com.fallen.ultra.listeners.UniversalFragmentButtonListener;

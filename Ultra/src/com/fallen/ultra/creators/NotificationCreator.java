@@ -1,6 +1,6 @@
 package com.fallen.ultra.creators;
 
-import com.example.ultra.R;
+import com.fallen.ultra.R;
 import com.fallen.ultra.activities.MainUltraActivity;
 import com.fallen.ultra.services.UltraPlayerService;
 import com.fallen.ultra.utils.Params;

@@ -18,4 +18,11 @@
         android:layout_height="wrap_content"
         android:text="Stop" />
 
+    <Switch
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="b"
+        android:textOn="a" />
+    
 </LinearLayout>
