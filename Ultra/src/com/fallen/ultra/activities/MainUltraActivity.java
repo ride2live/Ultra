@@ -1,8 +1,6 @@
-package com.fallen.ultra;
+package com.fallen.ultra.activities;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,15 +8,18 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.View;
 
 import com.example.ultra.R;
-import com.fallen.ultra.UltraPlayerService.LocalPlayerBinder;
+import com.fallen.ultra.adapters.MyPagerAdapter;
+import com.fallen.ultra.callbacks.PlayerFragmentCallback;
+import com.fallen.ultra.callbacks.ServiceCallback;
+import com.fallen.ultra.creators.TabsCreator;
+import com.fallen.ultra.listeners.TabChangeListener;
+import com.fallen.ultra.services.UltraPlayerService;
+import com.fallen.ultra.services.UltraPlayerService.LocalPlayerBinder;
+import com.fallen.ultra.utils.Params;
 
 public class MainUltraActivity extends FragmentActivity implements
 		TabChangeListener, PlayerFragmentCallback, ServiceCallback {
@@ -108,7 +109,7 @@ public class MainUltraActivity extends FragmentActivity implements
 	//better rewrite and use intent
 	public void start() {
 		
-		//playerService.playStream();
+		playerService.playStream();
 		// this.finish();
 	}
 

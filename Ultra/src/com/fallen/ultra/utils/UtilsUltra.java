@@ -1,9 +1,11 @@
-package com.fallen.ultra;
+package com.fallen.ultra.utils;
 
 import java.io.File;
 import java.io.IOException;
 
+import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -71,7 +73,7 @@ public abstract class UtilsUltra {
 		{
 			
 			stringTitle = stringTitle.replace(Params.STREAM_TITLE_KEYWORD, "");
-			if (!(stringTitle.startsWith("='")&&stringTitle.lastIndexOf("'")>2 &&stringTitle.contains(" - ")))
+			if (!(stringTitle.startsWith("='")|| stringTitle.lastIndexOf("'")>2 || stringTitle.contains(" - ")))
 			{
 				trackinfo.put(Params.TRACK_ARTIST_KEY, "");
 				trackinfo.put(Params.TRACK_SONG_KEY, stringTitle);
@@ -100,6 +102,16 @@ public abstract class UtilsUltra {
 		
 		}
 		
+	}
+
+
+
+	public static NotificationManager createNotificationManager(
+			Context applicationContext) {
+		// TODO Auto-generated method stub
+		applicationContext.getSystemService(
+				Context.NOTIFICATION_SERVICE);
+		return null;
 	}
 
 }

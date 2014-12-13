@@ -1,29 +1,36 @@
-package com.fallen.ultra;
+package com.fallen.ultra.services;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.fallen.ultra.async.AsyncLoadStream;
+import com.fallen.ultra.callbacks.AsyncLoadStreamCallback;
+import com.fallen.ultra.callbacks.OnServiceTask;
+import com.fallen.ultra.callbacks.ServiceCallback;
+import com.fallen.ultra.creators.NotificationCreator;
+import com.fallen.ultra.utils.Params;
+import com.fallen.ultra.utils.UtilsUltra;
+import com.fallen.ultra.utils.media.MediaPlayerExtended;
+
 public class UltraPlayerService extends Service implements
 		AsyncLoadStreamCallback {
 	private NotificationManager mNotificationManager;
-	private MediaPlayer mMediaPlayer;
+	//private MediaPlayer mMediaPlayer;
 	private final IBinder mBinder = new LocalPlayerBinder();
 	ServiceCallback mServiceCallback;
 	AsyncLoadStream mAsycLoadStream;
 	String currentArtist;
 	String currentTrack;
+	OnServiceTask serviceToPlayerCallback;
 
-	public UltraPlayerService() {
 
-	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -32,7 +39,7 @@ public class UltraPlayerService extends Service implements
 	}
 
 	public class LocalPlayerBinder extends Binder {
-		UltraPlayerService getService() {
+		public UltraPlayerService getService() {
 			return UltraPlayerService.this;
 		}
 	}
@@ -61,30 +68,26 @@ public class UltraPlayerService extends Service implements
 		return START_NOT_STICKY;
 	}
 
-	void playStream() {
+	public void playStream() {
+		serviceToPlayerCallback = new MediaPlayerExtended(this);
 		mAsycLoadStream = new AsyncLoadStream(this,
 				Params.ASYNC_ACTION_PLAY_STREAM);
 		mAsycLoadStream.execute(Params.ULTRA_URL_HIGH);
 
 	}
 
-	private void createNotify() {
+	private void createNotify(String tickerMessage) {
 		if (mNotificationManager == null)
-			mNotificationManager = createNotificationManager();
+			mNotificationManager = UtilsUltra
+					.createNotificationManager(getApplicationContext());
 
 		Notification playerNotification = NotificationCreator
 				.createPlayerNotification(getApplicationContext(),
 						getPackageName(), currentArtist, currentTrack);
-		showNotify(playerNotification);
+		startBackgroundWithNotifyer(playerNotification);
 	}
 
-	private NotificationManager createNotificationManager() {
-
-		return (NotificationManager) getApplicationContext().getSystemService(
-				Context.NOTIFICATION_SERVICE);
-	}
-
-	private void showNotify(Notification playerNotification) {
+	private void startBackgroundWithNotifyer(Notification playerNotification) {
 		startForeground(Params.NOTIFICATION_ID, playerNotification);
 
 	}
@@ -104,13 +107,9 @@ public class UltraPlayerService extends Service implements
 		stopSelf();
 	}
 
-	void stopStream() {
-		if (mMediaPlayer != null) {
-
-			mMediaPlayer.stop();
-			mMediaPlayer.release();
-			mMediaPlayer = null;
-		}
+	public void stopStream() {
+		if (serviceToPlayerCallback!=null)
+			serviceToPlayerCallback.stopAndReleasePlayer();
 		mAsycLoadStream.cancel(true);
 		removeNotify();
 
@@ -144,29 +143,21 @@ public class UltraPlayerService extends Service implements
 
 	@Override
 	public void onBuffered() {
-
-		mMediaPlayer.start();
-		if (mMediaPlayer.isPlaying())
-			createNotify();
+		if (serviceToPlayerCallback!=null)
+			serviceToPlayerCallback.onBuffered();
+		createNotify(Params.ACTION_BUFFERED);
+		
 	}
 
 	@Override
-	public void onSocketStrart() {
-		if (mMediaPlayer != null && mMediaPlayer.isPlaying())
-			return; // do nothing, already playing
-		try {
-			mMediaPlayer = MediaPlayer.create(getApplicationContext(),
-					Uri.parse(Params.LOCAL_SOCKET_STREAM_IP));
+	public void onSocketStart() {
+		serviceToPlayerCallback.onSocketCreated();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
 	public void onNewStreamTitleRetrieved(String stringTitle) {
 		ContentValues cv = UtilsUltra.createBundleWithMetadata(stringTitle);
-
 		updateNotify(cv);
 	}
 

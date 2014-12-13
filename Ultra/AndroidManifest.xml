@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.fallen.ultra.MainUltraActivity"
+            android:name="com.fallen.ultra.activities.MainUltraActivity"
             android:label="@string/app_name" 
             android:launchMode="singleTop">
             
@@ -28,10 +28,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fallen.ultra.PlayerNotificationActivity"
+            android:name="com.fallen.ultra.activities.PlayerNotificationActivity"
  >
         </activity>
-        <service android:name="com.fallen.ultra.UltraPlayerService" 
+        <service android:name="com.fallen.ultra.services.UltraPlayerService" 
           
 >
         </service>

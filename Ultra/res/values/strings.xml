@@ -3,5 +3,12 @@
 
     <string name="app_name">Ultra</string>
     <string name="hello_world">Hello world!</string>
+    <string name="playing">воспроизведение</string>
+    <string name="error">ошибка</string>
+    <string name="buffering">буферизация</string>
+    <string name="stopped">остановлено</string>
+    <string name="volume">громкость</string>
+    <string name="connecting">соединение</string>
+    <string name="unavailable">нет соединения</string>
 
 </resources>

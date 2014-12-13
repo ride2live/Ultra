@@ -1,6 +1,9 @@
-package com.fallen.ultra;
+package com.fallen.ultra.creators;
 
 import com.example.ultra.R;
+import com.fallen.ultra.activities.MainUltraActivity;
+import com.fallen.ultra.services.UltraPlayerService;
+import com.fallen.ultra.utils.Params;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -36,13 +39,10 @@ public abstract class NotificationCreator {
 		playbackControls.setTextViewText(R.id.trackLabel, trackName);
 		playbackControls.setOnClickPendingIntent(R.id.startButton, startPendingIntent);
 		playbackControls.setOnClickPendingIntent(R.id.stopButton, stopPendingIntent);
-		
 		NotificationCompat.Builder notificationBuilder = new Builder(context);
-		
 		notificationBuilder.setSmallIcon(android.R.drawable.presence_audio_online);
 		notificationBuilder.setContent(playbackControls);
-		notificationBuilder.setTicker(aristName + " - " + trackName);
-		
+		notificationBuilder.setTicker(aristName + trackName);
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 123, resultIntent, 0);
 		notificationBuilder.setAutoCancel(true);
 		notificationBuilder.setContentIntent(resultPendingIntent);

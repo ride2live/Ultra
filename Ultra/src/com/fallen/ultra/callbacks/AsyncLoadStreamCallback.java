@@ -1,8 +1,8 @@
-package com.fallen.ultra;
+package com.fallen.ultra.callbacks;
 
 public interface AsyncLoadStreamCallback {
 
 	void onBuffered();
-	void onSocketStrart();
+	void onSocketStart();
 	void onNewStreamTitleRetrieved(String stringTitle);
 }

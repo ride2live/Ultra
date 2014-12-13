@@ -1,4 +1,6 @@
-package com.fallen.ultra;
+package com.fallen.ultra.adapters;
+
+import com.fallen.ultra.fragments.FragmentPlayer;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

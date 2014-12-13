@@ -1,6 +1,7 @@
-package com.fallen.ultra;
+package com.fallen.ultra.listeners;
 
 import com.example.ultra.R;
+import com.fallen.ultra.utils.Params;
 
 import android.support.v4.app.FragmentActivity;
 import android.view.View;

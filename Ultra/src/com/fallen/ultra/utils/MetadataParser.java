@@ -1,4 +1,4 @@
-package com.fallen.ultra;
+package com.fallen.ultra.utils;
 
 public class MetadataParser {
 

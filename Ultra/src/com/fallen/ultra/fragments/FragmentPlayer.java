@@ -1,4 +1,4 @@
-package com.fallen.ultra;
+package com.fallen.ultra.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.ultra.R;
+import com.fallen.ultra.callbacks.PlayerFragmentCallback;
+import com.fallen.ultra.listeners.MyButtonClickListener;
+import com.fallen.ultra.listeners.UniversalFragmentButtonListener;
 
 public class FragmentPlayer extends android.support.v4.app.Fragment implements UniversalFragmentButtonListener {
 	PlayerFragmentCallback playerFragmentCallback;

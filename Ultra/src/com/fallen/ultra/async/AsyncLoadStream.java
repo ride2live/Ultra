@@ -1,4 +1,4 @@
-package com.fallen.ultra;
+package com.fallen.ultra.async;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +10,9 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 
-import com.fallen.ultra.Params;
+import com.fallen.ultra.callbacks.AsyncLoadStreamCallback;
+import com.fallen.ultra.utils.Params;
+import com.fallen.ultra.utils.UtilsUltra;
 
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -170,7 +172,7 @@ public class AsyncLoadStream extends AsyncTask<String, String, Void> {
 
 				@Override
 				public void run() {
-					streamCallback.onSocketStrart();
+					streamCallback.onSocketStart();
 				}
 			}, 1000);
 			super.onProgressUpdate(values);

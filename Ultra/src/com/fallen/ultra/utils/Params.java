@@ -1,4 +1,4 @@
-package com.fallen.ultra;
+package com.fallen.ultra.utils;
 
 public class Params {
 
@@ -10,7 +10,6 @@ public class Params {
 	public static final String ACTION_FROM_PLAYER_FRAGMENT = "ACTION_FROM_PLAYER_FRAGMENT";
 	public static final int BUTTON_START_KEY = 200;
 	public static final int BUTTON_STOP_KEY = 201;
-	//public static final String KEY_ACTION = "action";
 	public static final String ICY_KEY = "icy-metaint";
 	public static final String SOCKET_PORT = "8889";
 	public static final String LOCAL_SOCKET_STREAM_IP = "http://127.0.0.1:" + SOCKET_PORT;
@@ -28,4 +27,7 @@ public class Params {
 	public static final String NO_TITLE = "No Title";
 	public static final Object EMPTY_ARTIST_STRING = "";
 	public static final int ACTION_WRONG = -1;
+	
+	
+	
 }
