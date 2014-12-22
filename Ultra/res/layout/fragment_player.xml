@@ -4,25 +4,123 @@
     android:layout_height="match_parent"
     android:background="#303030"
     android:orientation="vertical" >
-    
-    <Button
-        android:id="@+id/startInFragment"
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#202020"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+id/artistTextFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:shadowColor="@android:color/holo_blue_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="artist"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="35sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/trackTextFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:shadowColor="@android:color/holo_blue_dark"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="track"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center" >
 
-        android:text="Start" />
+        <!-- REWRITE THIS TO FRAGMENT! -->
+
+        <ToggleButton
+            android:id="@+id/startInFragment"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/ultra_button_background"
+            android:text=""
+            android:textOff=""
+            android:textOn="" />
+
+        <ToggleButton
+            android:id="@+id/sstopInFragment"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@android:drawable/ic_media_pause"
+            android:text=""
+            android:textOff=""
+            android:textOn=""
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/stopInFragment"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop" />
+        android:layout_height="wrap_content" />
 
-    <Switch
-        android:id="@+id/toggleButton1"
+    <RadioGroup
+        android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textOff="b"
-        android:textOn="a" />
-    
+        android:background="@android:drawable/toast_frame"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/chooser128"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="128" />
+
+        <RadioButton
+            android:id="@+id/chooser64"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="64" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/statusInfoFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="@android:color/holo_blue_dark" />
+
 </LinearLayout>

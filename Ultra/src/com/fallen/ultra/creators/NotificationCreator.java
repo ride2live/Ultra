@@ -17,17 +17,20 @@ public abstract class NotificationCreator {
 
 	public static Notification createPlayerNotification(Context context, String packageName, String aristName, String trackName) {
 		// TODO Auto-generated method stub
-		
+		if (aristName == null)
+			aristName = "";
+		if (trackName == null)
+			trackName = Params.NO_TITLE;
 		Intent resultIntent = new Intent(context, MainUltraActivity.class);
 		RemoteViews playbackControls= new RemoteViews(packageName,R.layout.playback_controls);
 		
 		Intent startStreamIntent = new Intent(context, UltraPlayerService.class);
-		startStreamIntent.setAction(Params.ACTION_FROM_NOTIFIER_KEY);
-		startStreamIntent.putExtra(Params.KEY_PLAY, Params.FLAG_PLAY);
+		startStreamIntent.setAction(Params.ACTION_FROM_CONTROLS);
+		startStreamIntent.putExtra(Params.ACTION_FROM_CONTROLS, Params.FLAG_PLAY);
 		
 		Intent stopStreamIntent = new Intent(context, UltraPlayerService.class);
-		stopStreamIntent.putExtra(Params.KEY_PLAY, Params.FLAG_STOP);
-		stopStreamIntent.setAction(Params.ACTION_FROM_NOTIFIER_KEY);
+		stopStreamIntent.putExtra(Params.ACTION_FROM_CONTROLS, Params.FLAG_STOP);
+		stopStreamIntent.setAction(Params.ACTION_FROM_CONTROLS);
 		
 		PendingIntent startPendingIntent = PendingIntent.getService(context, 12, startStreamIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		PendingIntent stopPendingIntent = PendingIntent.getService(context, 122, stopStreamIntent, PendingIntent.FLAG_UPDATE_CURRENT);
