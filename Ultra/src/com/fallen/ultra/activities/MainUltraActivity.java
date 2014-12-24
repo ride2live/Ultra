@@ -30,7 +30,8 @@ import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
 
 public class MainUltraActivity extends FragmentActivity implements
-		TabChangeListener, PlayerFragmentCallback, ServiceToActivityCallback, Observer {
+		TabChangeListener, PlayerFragmentCallback, ServiceToActivityCallback,
+		Observer {
 	android.app.ActionBar actionTabsBar;
 	private ServiceConnection servCon;
 	private UltraPlayerService playerService;
@@ -41,11 +42,11 @@ public class MainUltraActivity extends FragmentActivity implements
 	private ActivityToFragmentListener mFragmentCallback;
 	private String currentStringStatus;
 	private int currentQualityKey;
-
+	StatusObject statusObjectRebinded;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_ultra);
 		actionTabsBar = getActionBar();
@@ -53,20 +54,23 @@ public class MainUltraActivity extends FragmentActivity implements
 		pager = (ViewPager) findViewById(R.id.pager);
 		pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
 		TabsCreator.buildActionBar(actionTabsBar, this);
-		SharedPreferences myPreferences = getSharedPreferences(Params.KEY_PREFERENCES_QUALITY, MODE_PRIVATE);
+		SharedPreferences myPreferences = getSharedPreferences(
+				Params.KEY_PREFERENCES_QUALITY, MODE_PRIVATE);
 		UtilsUltra.getQualityFromPreferences(myPreferences);
-		
-		Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+
+		Intent intent = new Intent(getApplicationContext(),
+				SplashActivity.class);
 		startActivity(intent);
-	
+
 	}
 
 	@Override
 	protected void onResume() {
-	//	if (servCon == null)
-		//	settingUpServiceConnection();
-		
-		Intent intent = UtilsUltra.createServiceIntentFromActivity(getApplicationContext(), Params.FLAG_BIND_ACTIVITY);
+		// if (servCon == null)
+		// settingUpServiceConnection();
+
+		Intent intent = UtilsUltra.createServiceIntentFromActivity(
+				getApplicationContext(), Params.FLAG_BIND_ACTIVITY);
 		if (servCon == null)
 			settingUpServiceConnection();
 		bindService(intent, servCon, Context.BIND_AUTO_CREATE);
@@ -83,10 +87,11 @@ public class MainUltraActivity extends FragmentActivity implements
 				// TODO Auto-generated method stub
 				System.out.println("onServiceDisconnected");
 				isServiceBinded = false;
-				if (playerService !=null)
+				if (playerService != null)
 					playerService.setCallback(null);
 				else
-					UtilsUltra.printLog("player service is null in activity", "Ultra Activity", Log.ERROR);
+					UtilsUltra.printLog("player service is null in activity",
+							"Ultra Activity", Log.ERROR);
 				servCon = null;
 
 			}
@@ -97,7 +102,7 @@ public class MainUltraActivity extends FragmentActivity implements
 				playerService = ((LocalPlayerBinder) service).getService();
 				isServiceBinded = true;
 				playerService.setCallback(MainUltraActivity.this);
-				
+
 				System.out.println("onServiceConnected");
 			}
 		};
@@ -106,24 +111,25 @@ public class MainUltraActivity extends FragmentActivity implements
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-		
-		if (isServiceBinded && servCon!=null)
-		{
-			
+
+		if (isServiceBinded && servCon != null) {
+
 			unbindService(servCon);
-			UtilsUltra.printLog("Activity onPause, unbind service", "Ultra Activity", Log.VERBOSE);
-		}
-		else
-			UtilsUltra.printLog("cant unbind service from activity", "Ultra Activity", Log.ERROR);
-		
-		
+			UtilsUltra.printLog("Activity onPause, unbind service",
+					"Ultra Activity", Log.VERBOSE);
+		} else
+			UtilsUltra.printLog("cant unbind service from activity",
+					"Ultra Activity", Log.ERROR);
+
 		super.onPause();
 	}
 
 	@Override
 	protected void onStop() {
 		System.out.println("Activity onStop");
-		UtilsUltra.putQualityToSharedPrefs(getSharedPreferences(Params.KEY_PREFERENCES_QUALITY, MODE_PRIVATE),currentQualityKey);
+		UtilsUltra.putQualityToSharedPrefs(
+				getSharedPreferences(Params.KEY_PREFERENCES_QUALITY,
+						MODE_PRIVATE), currentQualityKey);
 		super.onStop();
 	}
 
@@ -140,83 +146,72 @@ public class MainUltraActivity extends FragmentActivity implements
 
 	}
 
-	
 	public void start() {
-		Intent intent = UtilsUltra.createServiceIntentFromActivity(getApplicationContext(), Params.FLAG_PLAY, currentQualityKey);
+		Intent intent = UtilsUltra.createServiceIntentFromActivity(
+				getApplicationContext(), Params.FLAG_PLAY, currentQualityKey);
 		startService(intent);
 	}
 
 	public void stop() {
-		Intent intent = UtilsUltra.createServiceIntentFromActivity(getApplicationContext(), Params.FLAG_STOP);
+		Intent intent = UtilsUltra.createServiceIntentFromActivity(
+				getApplicationContext(), Params.FLAG_STOP);
 		startService(intent);
 	}
 
-	//Only button click handle 
-	//if need addition info use another callback
+	// Only button click handle
+	// if need addition info use another callback
 	@Override
 	public void buttonClicked(int action) {
 		// TODO Auto-generated method stub
 
-			sendToService(action);
+		sendToService(action);
 	}
 
 	private void sendToService(int action) {
 		// TODO Auto-generated method stub
 		switch (action) {
-			case Params.BUTTON_START_KEY:
-				start();
-				break;
-			case Params.BUTTON_STOP_KEY:
-				stop();
-				break;
-			default:
-				Log.e("ultraerr", "MainUltraActivity wrong id");
-				break;
-			}
+		case Params.BUTTON_START_KEY:
+			start();
+			break;
+		case Params.BUTTON_STOP_KEY:
+			stop();
+			break;
+		default:
+			Log.e("ultraerr", "MainUltraActivity wrong id");
+			break;
+		}
 
-		//}
+		// }
 	}
 
 	@Override
 	public void onUnbindService() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	@Override
-	public void newTitleRetrieved(String artist, String title) {
-		// TODO Auto-generated method stub
-		currentArtist = artist;
-		currentTrack = title;
-		Log.e("MainUltraActivity newTitleRetrieved", "UltraLog");
-		updateFragmentWithTitles();
-		
-	}
 
-	private void updateFragmentWithTitles() {
-		// TODO Auto-generated method stub
-		if (mFragmentCallback!=null)
-			mFragmentCallback.onTitleChanged(currentArtist, currentTrack);
-	}
+
+
 
 	@Override
 	public void onInit() {
 		int playerFragmentPosition = 0;
-		MyPagerAdapter myAdapter = (MyPagerAdapter)pager.getAdapter();
+		MyPagerAdapter myAdapter = (MyPagerAdapter) pager.getAdapter();
 		SparseArray<Fragment> spa = myAdapter.getCurrentFragment();
 		Fragment f = spa.get(playerFragmentPosition);
-		FragmentPlayer myFragment = (FragmentPlayer)f; 
+		FragmentPlayer myFragment = (FragmentPlayer) f;
 		mFragmentCallback = myFragment;
-		if (playerService!=null && isServiceBinded)//looks like we rebind
-			updateAllFramentFields();
+		UtilsUltra.printLog("onFragmentInit");
+		if (playerService != null && isServiceBinded
+				&& statusObjectRebinded != null && mFragmentCallback != null)// looks
+																				// like
+																				// we
+																				// rebind
+			mFragmentCallback.updateOnRebind(statusObjectRebinded);
+		// updateAllFramentFields();
 		// TODO Auto-generated method stub
-		
-	}
 
-	private void updateAllFramentFields() {
-		// TODO Auto-generated method stub
-		if (mFragmentCallback!=null)
-			mFragmentCallback.updateAll (currentArtist, currentTrack, currentStringStatus);
 	}
 
 	@Override
@@ -225,49 +220,43 @@ public class MainUltraActivity extends FragmentActivity implements
 		mFragmentCallback = null;
 	}
 
-	@Override
-	public void onStatusChanged(int status) {
-		// TODO Auto-generated method stub
-		if (mFragmentCallback !=null)
-		{
-			currentStringStatus = UtilsUltra.getStatusDescription(getResources(), status);
-			mFragmentCallback.onStatusChanged(currentStringStatus);
-		}
-
-		
-	}
+//	@Override
+//	public void onStatusChanged(int status) {
+//		// TODO Auto-generated method stub
+//		if (mFragmentCallback != null) {
+//			currentStringStatus = UtilsUltra.getStatusDescription(
+//					getResources(), status);
+//			mFragmentCallback.onStatusChanged(currentStringStatus);
+//		}
+//
+//	}
 
 	@Override
 	public void setQuality(int qualityKey) {
-		
+
 		currentQualityKey = qualityKey;
-/*		switch (qualityKey) {
-		case Params.QUALITY_128:
-			qualityURL = Params.ULTRA_URL_HIGH;
-			break;
-		case Params.QUALITY_64:
-			qualityURL = Params.ULTRA_URL_LOW;
-			break;		
-		default:
-			qualityURL = Params.ULTRA_URL_HIGH;
-			break;
-		}*/
-		
-		
-	
+		/*
+		 * switch (qualityKey) { case Params.QUALITY_128: qualityURL =
+		 * Params.ULTRA_URL_HIGH; break; case Params.QUALITY_64: qualityURL =
+		 * Params.ULTRA_URL_LOW; break; default: qualityURL =
+		 * Params.ULTRA_URL_HIGH; break; }
+		 */
+
 	}
 
 	@Override
 	public void update(StatusObject sObject) {
 		// TODO Auto-generated method stub
-		//mFragmentCallback.onStatusChanged();
-		if (mFragmentCallback!=null)
+		// mFragmentCallback.onStatusChanged();
+		if (mFragmentCallback != null)
 			mFragmentCallback.onStatusChanged(sObject);
 	}
 
-
-
-
-
+	@Override
+	public void onRebindStatus(StatusObject statusObjectRebinded) {
+		// TODO Auto-generated method stub
+		this.statusObjectRebinded = statusObjectRebinded;
+		UtilsUltra.printLog("onRebindStatus");
+	}
 
 }

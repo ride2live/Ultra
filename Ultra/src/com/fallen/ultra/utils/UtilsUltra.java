@@ -122,21 +122,7 @@ public abstract class UtilsUltra {
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
-	public static String getStatusDescription(Resources resources,
-			int currentStatus) {
-		// TODO Auto-generated method stub
-		String statusString = "";
-		switch (currentStatus) {
-		case Params.ACTION_CONNECTING:
-			statusString = resources.getString(R.string.connecting);
-			break;
 
-		default:
-			statusString = "in progress";
-			break;
-		}
-		return statusString;
-	}
 
 	public static int getMetInt(URLConnection uc) {
 		// TODO Auto-generated method stub

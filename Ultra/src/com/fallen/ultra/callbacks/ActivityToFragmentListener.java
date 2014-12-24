@@ -9,6 +9,7 @@ public interface ActivityToFragmentListener {
 			String currentStatus);
 	void onStatusChanged(String status);
 	void onStatusChanged(StatusObject stausObj);
+	void updateOnRebind (StatusObject statusObj);
 
 	
 	

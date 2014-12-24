@@ -8,9 +8,27 @@ public class StatusObject {
 	private String artist = null;
 	private String track = null;
 	private String error = null;
+	private boolean isAsync = false;
+	private boolean isOnRebindKeeper;
+
+	public boolean isOnRebindKeeper() {
+		return isOnRebindKeeper;
+	}
+	/**
+	 * use this constructor only for rebind status keep
+	 */
+	public StatusObject() {
+		// TODO Auto-generated constructor stub
+		isOnRebindKeeper = true;
+	}
+
+	public boolean isAsync() {
+		return isAsync;
+	}
 
 	public StatusObject(int status, boolean isFromAsync) {
 		// TODO Auto-generated constructor stub
+		isAsync = isFromAsync;
 		if (isFromAsync)
 			setAsyncStatus(status);
 		else
@@ -22,7 +40,10 @@ public class StatusObject {
 		setAsyncStatus(status);
 		setArtist(artist);
 		setTrack(track);
+		isAsync = true;
 	}
+
+
 
 	public int getAsyncStatus() {
 		return asyncStatus;
@@ -62,9 +83,7 @@ public class StatusObject {
 		return track;
 	}
 
-	public int getStatus() {
-		return asyncStatus;
-	}
+
 
 	public String getArtist() {
 		return artist;

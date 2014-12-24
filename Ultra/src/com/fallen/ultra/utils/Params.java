@@ -54,6 +54,7 @@ public class Params {
 	public static final int STATUS_NEW_TITLE = 506;
 	public static final boolean USE_CHECKER = false;
 	public static final int STATUS_NONE = -1;
+	public static final int STATUS_STREAM_ENDS = 507;
 
 	
 	

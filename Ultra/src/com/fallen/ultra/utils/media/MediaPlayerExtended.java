@@ -26,6 +26,7 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 	public MediaPlayerExtended(Context context) {
 		// TODO Auto-generated constructor stub
 		this.context = context;
+		observers = new ArrayList<Observer>();
 		
 		/*
 		 * try { mMediaPlayer = new MediaPlayer();
@@ -43,9 +44,10 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 
 	@Override
 	public boolean onSocketCreated() {
-		
+		notifyObservers(new StatusObject(Params.STATUS_SOCKET_CREATING, false));
 		boolean isSuccess = preparePlayer();
 		isDataWasSetSuccessfully = isSuccess;
+		
 		UtilsUltra.printLog("onSocket and setData = " + isSuccess, "Ultra", Log.VERBOSE);
 		return  isSuccess; 
 
@@ -57,6 +59,7 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 		{
 			try {
 				start();
+				notifyObservers(new StatusObject(Params.STATUS_PLAYING, false));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -117,6 +120,7 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 			stop();
 			release();
 			isSuccess = true;
+			notifyObservers(new StatusObject(Params.STATUS_STOPED, false));
 		} catch (Exception e) {
 			UtilsUltra.printLog("Something realy bad happens! Cant stop media", null, Log.ERROR);
 			e.printStackTrace();
@@ -135,19 +139,22 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 	@Override
 	public void registerObserver(Observer o) {
 		// TODO Auto-generated method stub
-		
+		observers.add(o);
 	}
 
 	@Override
 	public void removeObserver(Observer o) {
 		// TODO Auto-generated method stub
-		
+		observers.remove(o);
 	}
 
 	@Override
 	public void notifyObservers(StatusObject sObject) {
 		// TODO Auto-generated method stub
-		
+		for (Observer observer : observers) {
+			if (observer!=null)
+				observer.update(sObject);
+		}
 	}
 
 	

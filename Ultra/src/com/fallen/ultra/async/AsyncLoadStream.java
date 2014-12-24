@@ -86,6 +86,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 					{
 						isBuffered = true;
 						publishProgress(new StatusObject(Params.STATUS_BUFFERING,true));
+						publishProgress(new StatusObject(Params.STATUS_NONE, true));
 					}
 
 				}
@@ -127,6 +128,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			e.printStackTrace();
 		}
 		UtilsUltra.printLog("Server rerturn -1, closing socket", null, Log.ERROR);
+		publishProgress(new StatusObject(Params.STATUS_STREAM_ENDS, true));
 		try {
 			if (out != null)
 				out.close();
@@ -227,7 +229,8 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 	public void notifyObservers(StatusObject sObject) {
 		// TODO Auto-generated method stub
 		for (Observer observer : observers) {
-			observer.update(sObject);
+			if (observer!=null)
+				observer.update(sObject);
 		}
 		
 	}

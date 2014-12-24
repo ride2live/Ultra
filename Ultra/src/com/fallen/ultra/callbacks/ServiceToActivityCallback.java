@@ -1,8 +1,10 @@
 package com.fallen.ultra.callbacks;
 
+import com.fallen.ultra.creators.StatusObject;
+
 public interface ServiceToActivityCallback {
 
 	void onUnbindService ();
-	void newTitleRetrieved(String artist, String title);
-	void onStatusChanged (int status);
+
+	void onRebindStatus(StatusObject statusObjectRebinded);
 }

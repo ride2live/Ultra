@@ -40,6 +40,7 @@ public class UltraPlayerService extends Service implements Observer {
 	@Override
 	public IBinder onBind(Intent intent) {
 		System.out.println("onBind Service");
+		statusStreamObject = new StatusObject();
 		return mBinder;
 	}
 
@@ -54,10 +55,16 @@ public class UltraPlayerService extends Service implements Observer {
 		// TODO Auto-generated method stub
 		super.onRebind(intent);
 		System.out.println("onRebind service");
-		if (currentArtist != null || currentTrack != null) {
+		if (currentArtist != null || currentTrack != null) { // remove from here
+																// use callback
+																// one time in
+																// callback init
+																// to retrieve
+																// current
+																// summary
+																// status object
 			if (mServiceToActivityCallback != null)
-				mServiceToActivityCallback.newTitleRetrieved(currentArtist,
-						currentTrack);
+				mServiceToActivityCallback.onRebindStatus(statusStreamObject);
 		}
 
 	}
@@ -97,8 +104,11 @@ public class UltraPlayerService extends Service implements Observer {
 	}
 
 	public void playStream(String qualityURL) {
-		if (serviceToPlayerCallback == null)
+		if (serviceToPlayerCallback == null) {
 			serviceToPlayerCallback = new MediaPlayerExtended(this);
+			serviceToPlayerCallback.registerObserver(this);
+			serviceToPlayerCallback.registerObserver(activityObserver);
+		}
 
 		if (mAsycLoadStream == null) {
 			mAsycLoadStream = new AsyncLoadStream();
@@ -201,6 +211,18 @@ public class UltraPlayerService extends Service implements Observer {
 
 		this.mServiceToActivityCallback = activity;
 		this.activityObserver = activity;
+		if (activity == null) {
+			if (mAsycLoadStream != null)
+				mAsycLoadStream.removeObserver(activity);
+			if (serviceToPlayerCallback != null)
+				serviceToPlayerCallback.removeObserver(activity);
+		} else {
+			if (mAsycLoadStream != null)
+				mAsycLoadStream.registerObserver(activity);
+			if (serviceToPlayerCallback != null)
+				serviceToPlayerCallback.registerObserver(activity);
+		}
+
 		if (activity == null && mAsycLoadStream != null) {
 
 			mAsycLoadStream.removeObserver(activity);
@@ -216,34 +238,47 @@ public class UltraPlayerService extends Service implements Observer {
 		// onSocketStart
 		// onBuffered
 		// onconnecting
-		switch (sObject.getStatus()) {
-		case Params.STATUS_BUFFERING:
-			if (serviceToPlayerCallback != null)
-				serviceToPlayerCallback.onBuffered();
-			createNotify();
-			break;
-		case Params.STATUS_NEW_TITLE:
-			currentArtist = sObject.getArtist();
-			currentTrack = sObject.getTrack();
-			updateNotify();
-			break;
-		case Params.STATUS_SOCKET_CREATING:
-			new Handler().postDelayed(new Runnable() {
+		if (sObject.isAsync()) {
+			int status = sObject.getAsyncStatus();
+			switch (status) {
+			case Params.STATUS_BUFFERING:
+				if (serviceToPlayerCallback != null)
+					serviceToPlayerCallback.onBuffered();
+				statusStreamObject.setAsyncStatus(status);
+				createNotify();
+				break;
+			case Params.STATUS_NEW_TITLE:
+				currentArtist = sObject.getArtist();
+				currentTrack = sObject.getTrack();
+				statusStreamObject.setArtist(currentArtist);
+				statusStreamObject.setTrack(currentTrack);
+				updateNotify();
+				break;
+			case Params.STATUS_SOCKET_CREATING:
+				new Handler().postDelayed(new Runnable() {
 
-				@Override
-				public void run() {
-					if (serviceToPlayerCallback != null)
-						serviceToPlayerCallback.onSocketCreated();
-				}
-			}, 1000);
-			break;
-
-		default:
-			break;
+					@Override
+					public void run() {
+						if (serviceToPlayerCallback != null)
+							serviceToPlayerCallback.onSocketCreated();
+					}
+				}, 1000);
+				break;
+			case Params.STATUS_STREAM_ENDS:
+				statusStreamObject.setPlayerStatus(Params.STATUS_STOPED);
+				stopStream();
+			
+			default:
+				break;
+			}
+		}
+		else
+		{
+			int status = sObject.getPlayerStatus();
+			statusStreamObject.setPlayerStatus(status);
 		}
 	}
 
-	
 	public StatusObject getStatusObject() {
 		return statusStreamObject;
 	}

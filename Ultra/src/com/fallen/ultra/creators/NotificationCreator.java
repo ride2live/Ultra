@@ -43,7 +43,7 @@ public abstract class NotificationCreator {
 		playbackControls.setOnClickPendingIntent(R.id.startButton, startPendingIntent);
 		playbackControls.setOnClickPendingIntent(R.id.stopButton, stopPendingIntent);
 		NotificationCompat.Builder notificationBuilder = new Builder(context);
-		notificationBuilder.setSmallIcon(android.R.drawable.presence_audio_online);
+		notificationBuilder.setSmallIcon(R.drawable.ultra_logo_24);
 		notificationBuilder.setContent(playbackControls);
 		notificationBuilder.setTicker(aristName + trackName);
 		PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 123, resultIntent, 0);

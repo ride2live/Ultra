@@ -27,10 +27,11 @@ public  class MyButtonClickListener implements OnClickListener,  android.widget.
 		case R.id.startInFragment:
 			action  = Params.BUTTON_START_KEY; //+ high or low
 			break;
-		case R.id.stopInFragment:
-			action  = Params.BUTTON_STOP_KEY;
-			break;
 
+		case R.id.sstopInFragment:
+			action  = Params.BUTTON_STOP_KEY;
+			
+			break;
 		default:
 			break;
 		}
