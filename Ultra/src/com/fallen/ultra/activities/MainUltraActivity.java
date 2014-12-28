@@ -1,6 +1,5 @@
 package com.fallen.ultra.activities;
 
-import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,39 +7,31 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.fallen.ultra.R;
-import com.fallen.ultra.adapters.MyPagerAdapter;
 import com.fallen.ultra.callbacks.ActivityToFragmentListener;
 import com.fallen.ultra.callbacks.Observer;
 import com.fallen.ultra.callbacks.PlayerFragmentCallback;
 import com.fallen.ultra.callbacks.ServiceToActivityCallback;
 import com.fallen.ultra.creators.StatusObject;
-import com.fallen.ultra.creators.TabsCreator;
 import com.fallen.ultra.fragments.FragmentPlayer;
-import com.fallen.ultra.listeners.TabChangeListener;
 import com.fallen.ultra.services.UltraPlayerService;
 import com.fallen.ultra.services.UltraPlayerService.LocalPlayerBinder;
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
 
 public class MainUltraActivity extends FragmentActivity implements
-		TabChangeListener, PlayerFragmentCallback, ServiceToActivityCallback,
+		 PlayerFragmentCallback, ServiceToActivityCallback,
 		Observer {
 	android.app.ActionBar actionTabsBar;
 	private ServiceConnection servCon;
 	private UltraPlayerService playerService;
-	private String currentArtist;
-	private String currentTrack;
-	ViewPager pager;
+
+	//ViewPager pager;
 	private boolean isServiceBinded = false;
 	private ActivityToFragmentListener mFragmentCallback;
-	private String currentStringStatus;
 	private int currentQualityKey;
 	StatusObject statusObjectRebinded;
 
@@ -49,18 +40,22 @@ public class MainUltraActivity extends FragmentActivity implements
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_ultra);
-		actionTabsBar = getActionBar();
-		actionTabsBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		pager = (ViewPager) findViewById(R.id.pager);
-		pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-		TabsCreator.buildActionBar(actionTabsBar, this);
+		
+		
+		//FragmentManager manager;
+		
+//		actionTabsBar = getActionBar();
+//		actionTabsBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+//		pager = (ViewPager) findViewById(R.id.pager);
+//		pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+//		TabsCreator.buildActionBar(actionTabsBar, this);
 		SharedPreferences myPreferences = getSharedPreferences(
 				Params.KEY_PREFERENCES_QUALITY, MODE_PRIVATE);
 		UtilsUltra.getQualityFromPreferences(myPreferences);
 
 		Intent intent = new Intent(getApplicationContext(),
 				SplashActivity.class);
-		startActivity(intent);
+		//startActivity(intent);
 
 	}
 
@@ -102,6 +97,7 @@ public class MainUltraActivity extends FragmentActivity implements
 				playerService = ((LocalPlayerBinder) service).getService();
 				isServiceBinded = true;
 				playerService.setCallback(MainUltraActivity.this);
+				
 
 				System.out.println("onServiceConnected");
 			}
@@ -140,11 +136,12 @@ public class MainUltraActivity extends FragmentActivity implements
 		super.onDestroy();
 	}
 
-	@Override
-	public void pageChanged(int position) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void pageChanged(int position) {
+//		// TODO Auto-generated method stub
+//		
+//
+//	}
 
 	public void start() {
 		Intent intent = UtilsUltra.createServiceIntentFromActivity(
@@ -196,12 +193,13 @@ public class MainUltraActivity extends FragmentActivity implements
 
 	@Override
 	public void onInit() {
-		int playerFragmentPosition = 0;
-		MyPagerAdapter myAdapter = (MyPagerAdapter) pager.getAdapter();
-		SparseArray<Fragment> spa = myAdapter.getCurrentFragment();
-		Fragment f = spa.get(playerFragmentPosition);
-		FragmentPlayer myFragment = (FragmentPlayer) f;
-		mFragmentCallback = myFragment;
+		
+		//int playerFragmentPosition = 0;
+		//MyPagerAdapter myAdapter = (MyPagerAdapter) pager.getAdapter();
+		//SparseArray<Fragment> spa = myAdapter.getCurrentFragment();
+		//Fragment f = spa.get(playerFragmentPosition);
+		//FragmentPlayer myFragment = (FragmentPlayer) f;
+		//mFragmentCallback = myFragment;
 		UtilsUltra.printLog("onFragmentInit");
 		if (playerService != null && isServiceBinded
 				&& statusObjectRebinded != null && mFragmentCallback != null)// looks
@@ -256,7 +254,18 @@ public class MainUltraActivity extends FragmentActivity implements
 	public void onRebindStatus(StatusObject statusObjectRebinded) {
 		// TODO Auto-generated method stub
 		this.statusObjectRebinded = statusObjectRebinded;
+		if (playerService != null && isServiceBinded
+				&& statusObjectRebinded != null && mFragmentCallback != null)// looks
+																				// like
+																				// we
+																				// rebind
+			mFragmentCallback.updateOnRebind(statusObjectRebinded);
 		UtilsUltra.printLog("onRebindStatus");
+	}
+
+	public void setCallback(FragmentPlayer fragmentPlayer) {
+		// TODO Auto-generated method stub
+		mFragmentCallback = fragmentPlayer;
 	}
 
 }

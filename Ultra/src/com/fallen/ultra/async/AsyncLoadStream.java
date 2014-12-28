@@ -44,17 +44,21 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 		Socket client;
 		// File fileToWrite = UtilsUltra.getTestFileToWrite();
 		OutputStream out = null;
+		InputStream radioStream = null;
 		try {
 			url = new URL(params[0]);
 			HttpURLConnection uc = getUrlConnection(url);
+			
+			uc.setUseCaches(true);
+			uc.setConnectTimeout(Params.CONNECTION_TIMEOUT);
 			uc.connect();
 			metaInt = UtilsUltra.getMetInt(uc);
 			UtilsUltra.printLog("metaInt " + metaInt, null, 0);
 			if (bufferBeforePlayback < metaInt + Params.MAX_METAINT_VALUE)
 				bufferBeforePlayback = metaInt + Params.MAX_METAINT_VALUE;
 			UtilsUltra.printLog("bufferBeforePlayback " + bufferBeforePlayback, null, 0);
-			System.out.println();
-			InputStream radioStream = uc.getInputStream();
+			
+			radioStream = uc.getInputStream();
 			byte[] buffer = new byte[Params.DEFAULT_INPUTSTREAM_BUFFER_BYTES];
 			int bytesRealyRead = 0;
 			int byteToRead = 1024;
@@ -63,7 +67,9 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			try {
 				serverSocket = new ServerSocket(
 						Integer.parseInt(Params.SOCKET_PORT));
+				UtilsUltra.printLog("socket created");
 				publishProgress(new StatusObject(Params.STATUS_SOCKET_CREATING, true));
+				UtilsUltra.printLog("update status, and waiting for mediaplayer connect");
 				client = serverSocket.accept();
 				emulatingStream = client.getOutputStream();
 				emulatingStream = configureOutputstream(emulatingStream);
@@ -134,6 +140,9 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 				out.close();
 			if (serverSocket != null)
 				serverSocket.close();
+			
+			if (radioStream !=null)
+				radioStream.close();
 		} catch (IOException e) {
 
 			e.printStackTrace();
@@ -146,14 +155,16 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 		try {
 			UtilsUltra.printLog("opening connection " + url, null, 0);
 			publishProgress(new StatusObject(Params.STATUS_CONNECTING, true));
+			
 			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.addRequestProperty("Icy-MetaData", "1");
-			
+			urlConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6");
+			urlConnection.addRequestProperty("Content-Type", "audio/mpeg");
 		} catch (IOException e) {
 			e.printStackTrace();
 			UtilsUltra.printLog("failed connection ", null, Log.ERROR);
 		}
-		
+		UtilsUltra.printLog("opening connection done " + url, null, 0);
 		return urlConnection;
 	}
 

@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
@@ -6,6 +6,7 @@
     android:background="#303030"
     tools:context="${relativePackage}.${activityClass}" >
         <LinearLayout
+           android:id="@+id/logoview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
@@ -25,11 +26,20 @@
                 android:layout_height="3dp"
                 android:background="@android:color/holo_blue_light" />
         </LinearLayout>
-    <android.support.v4.view.ViewPager
+        
+           <fragment android:name="com.fallen.ultra.fragments.FragmentPlayer"
+               android:layout_below="@+id/logoview"
+              android:id="@+id/fragmenthuagment"
+             
+              android:layout_width="fill_parent"
+              android:layout_height="match_parent"
+               />
+            />
+   <!-- <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-    </android.support.v4.view.ViewPager>
+    </android.support.v4.view.ViewPager> --> 
     
 
-</LinearLayout>
+</RelativeLayout>

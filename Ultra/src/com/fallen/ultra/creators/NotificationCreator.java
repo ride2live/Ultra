@@ -40,7 +40,7 @@ public abstract class NotificationCreator {
 			aristName +=" - ";
 		playbackControls.setTextViewText(R.id.artistLabel, aristName);
 		playbackControls.setTextViewText(R.id.trackLabel, trackName);
-		playbackControls.setOnClickPendingIntent(R.id.startButton, startPendingIntent);
+		//playbackControls.setOnClickPendingIntent(R.id.startButton, startPendingIntent);
 		playbackControls.setOnClickPendingIntent(R.id.stopButton, stopPendingIntent);
 		NotificationCompat.Builder notificationBuilder = new Builder(context);
 		notificationBuilder.setSmallIcon(R.drawable.ultra_logo_24);

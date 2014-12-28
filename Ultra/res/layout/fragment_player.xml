@@ -24,6 +24,7 @@
             android:padding="10dp" >
 
             <TextView
+                android:maxLines="2"
                 android:id="@+id/artistTextFragment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -38,6 +39,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:maxLines="2"
                 android:id="@+id/trackTextFragment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,6 +55,16 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="120dp"
+        android:background="#FFFFFF"
+        android:src="@android:drawable/ic_menu_gallery"
+        android:scaleType="fitXY"
+        android:layout_height="120dp" >
+    </ImageView>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -64,8 +76,8 @@
 
         <ToggleButton
             android:id="@+id/startInFragment"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:background="@drawable/button_background_play"
             android:text=""
             android:textOff=""
@@ -73,8 +85,8 @@
 
         <ToggleButton
             android:id="@+id/sstopInFragment"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:background="@drawable/button_background_stop"
             android:text=""
             android:textOff=""
@@ -82,31 +94,31 @@
             android:visibility="gone" />
 
         <ProgressBar
-            android:padding="10dp"
             android:id="@+id/progressFragment"
-            android:background="@drawable/exp_play"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_centerInParent="true"
+            android:background="@drawable/exp_play"
+            android:padding="10dp"
             android:visibility="gone" />
     </RelativeLayout>
+
     <TextView
-        android:layout_marginTop="40dp"
-        android:textSize="20sp"
-        android:layout_gravity="center_horizontal"
         android:id="@+id/statusInfoFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
         android:text="TextView"
-        android:textColor="@android:color/holo_blue_dark" />
-    
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="20sp" />
 
     <RadioGroup
-        android:layout_marginTop="40dp"
-        android:layout_gravity="center_horizontal"
         android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
         android:background="@android:drawable/toast_frame"
         android:orientation="horizontal" >
 
@@ -124,7 +136,5 @@
             android:layout_marginLeft="20dp"
             android:text="64" />
     </RadioGroup>
-
-
 
 </LinearLayout>

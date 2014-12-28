@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.fallen.ultra.R;
+import com.fallen.ultra.activities.MainUltraActivity;
 import com.fallen.ultra.callbacks.ActivityToFragmentListener;
 import com.fallen.ultra.callbacks.PlayerFragmentCallback;
 import com.fallen.ultra.callbacks.UniversalFragmentButtonListener;
@@ -32,7 +33,7 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-
+		((MainUltraActivity)getActivity()).setCallback (this);
 		super.onCreate(savedInstanceState);
 	}
 
@@ -80,7 +81,7 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		return inflater.inflate(R.layout.fragment_player, null);
+		return inflater.inflate(R.layout.fragment_player, container, false);
 	}
 
 	@Override

@@ -4,13 +4,16 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 import com.fallen.ultra.activities.MainUltraActivity;
 import com.fallen.ultra.async.AsyncCheckLegal;
+import com.fallen.ultra.async.AsyncImageLoader;
 import com.fallen.ultra.async.AsyncLoadStream;
 import com.fallen.ultra.callbacks.Observer;
 import com.fallen.ultra.callbacks.ObserverableMediaPlayer;
@@ -55,17 +58,9 @@ public class UltraPlayerService extends Service implements Observer {
 		// TODO Auto-generated method stub
 		super.onRebind(intent);
 		System.out.println("onRebind service");
-		if (currentArtist != null || currentTrack != null) { // remove from here
-																// use callback
-																// one time in
-																// callback init
-																// to retrieve
-																// current
-																// summary
-																// status object
-			if (mServiceToActivityCallback != null)
-				mServiceToActivityCallback.onRebindStatus(statusStreamObject);
-		}
+		
+
+	
 
 	}
 
@@ -221,6 +216,8 @@ public class UltraPlayerService extends Service implements Observer {
 				mAsycLoadStream.registerObserver(activity);
 			if (serviceToPlayerCallback != null)
 				serviceToPlayerCallback.registerObserver(activity);
+			
+				mServiceToActivityCallback.onRebindStatus(statusStreamObject);
 		}
 
 		if (activity == null && mAsycLoadStream != null) {
@@ -248,13 +245,17 @@ public class UltraPlayerService extends Service implements Observer {
 				createNotify();
 				break;
 			case Params.STATUS_NEW_TITLE:
+				
+				
 				currentArtist = sObject.getArtist();
 				currentTrack = sObject.getTrack();
+				loadImage(currentArtist, currentTrack);
 				statusStreamObject.setArtist(currentArtist);
 				statusStreamObject.setTrack(currentTrack);
 				updateNotify();
 				break;
 			case Params.STATUS_SOCKET_CREATING:
+				UtilsUltra.printLog("status socket created recieved");
 				new Handler().postDelayed(new Runnable() {
 
 					@Override
@@ -276,6 +277,23 @@ public class UltraPlayerService extends Service implements Observer {
 		{
 			int status = sObject.getPlayerStatus();
 			statusStreamObject.setPlayerStatus(status);
+		}
+	}
+
+	private void loadImage(String artist, String track) {
+		// TODO Auto-generated method stub
+		if (mServiceToActivityCallback!=null)
+		{
+			if (  artist!=null && !artist.equals(Params.NO_TITLE)&& track!=null)
+			{
+				AsyncImageLoader async = new AsyncImageLoader();
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+					async.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, artist, track);
+				else
+					async.execute(artist, track);
+				
+				
+			}
 		}
 	}
 

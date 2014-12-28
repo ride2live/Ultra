@@ -8,6 +8,7 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.fallen.ultra.fragments.FragmentPlayer;
+import com.fallen.ultra.fragments.FragmentTeletype;
 import com.fallen.ultra.utils.UtilsUltra;
 
 public class MyPagerAdapter extends FragmentPagerAdapter {
@@ -30,8 +31,12 @@ public class MyPagerAdapter extends FragmentPagerAdapter {
 			currentFragment = new FragmentPlayer();
 			break;
 
+		case 1:
+			currentFragment = new FragmentTeletype();
+			break;
+
 		default:
-			currentFragment = new Fragment(); 
+			currentFragment = new Fragment();
 			break;
 		}
 	

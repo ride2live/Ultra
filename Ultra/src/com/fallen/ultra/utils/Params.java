@@ -55,7 +55,13 @@ public class Params {
 	public static final boolean USE_CHECKER = false;
 	public static final int STATUS_NONE = -1;
 	public static final int STATUS_STREAM_ENDS = 507;
-
+	public static final int CONNECTION_TIMEOUT = 5000;
+	
+	public static String LASTFM_DEV_KEY = "73bb327ff0e5bd23f100274492105b4f";
+	public static String LASTFM_TRACK_GET_INFO = "http://ws.audioscrobbler.com/2.0/?method=track.getInfo";
+	public static String LASTFM_TRACK_CORRECTION = "http://ws.audioscrobbler.com/2.0/?method=track.getCorrection";
+	public static String LASTFM_ARTIST_CORRECTION = "http://ws.audioscrobbler.com/2.0/?method=artist.getCorrection";
+	
 	
 	
 	
