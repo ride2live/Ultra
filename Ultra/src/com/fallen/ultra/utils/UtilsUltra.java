@@ -234,10 +234,16 @@ public abstract class UtilsUltra {
 		return description;
 	}
 
-	public static String createLastFMGetTrackRequest(String artist, String track) {
+	public static String createLastFMRequest(String artist, String track) {
 		// TODO Auto-generated method stub
 		String urlGetTrackInfo = Params.LASTFM_TRACK_GET_INFO+"&api_key="+Params.LASTFM_DEV_KEY+"&artist="+artist+"&track="+track;
 				//http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=73bb327ff0e5bd23f100274492105b4f&artist=cher&track=believe
+		return urlGetTrackInfo;
+	}
+
+	public static String createLastFMArtistRequest(String artist) {
+		// TODO Auto-generated method stub
+		String urlGetTrackInfo = Params.LASTFM_ARTIST_GET_INFO+"&api_key="+Params.LASTFM_DEV_KEY+"&artist="+artist;
 		return urlGetTrackInfo;
 	}
 }

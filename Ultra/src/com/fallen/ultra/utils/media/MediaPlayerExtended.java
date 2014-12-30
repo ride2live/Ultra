@@ -157,5 +157,16 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 		}
 	}
 
+	@Override
+	public void onPhoneAction(int intExtra) {
+		// TODO Auto-generated method stub
+		UtilsUltra.printLog("action on call = " +intExtra);
+		if (isPlaying()&&intExtra == Params.ACTION_PHONE_CALL)
+			setVolume(0.0f, 0.0f);
+		else if (isPlaying()&& intExtra == Params.ACTION_PHONE_CALL_DONE)
+			setVolume(1.0f, 1.0f);
+			
+	}
+
 	
 }

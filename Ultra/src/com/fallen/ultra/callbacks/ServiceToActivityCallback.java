@@ -7,4 +7,6 @@ public interface ServiceToActivityCallback {
 	void onUnbindService ();
 
 	void onRebindStatus(StatusObject statusObjectRebinded);
+
+	void onImageBuffered();
 }

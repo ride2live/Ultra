@@ -1,12 +1,19 @@
 package com.fallen.ultra.fragments;
 
+import java.io.File;
+import java.io.FileDescriptor;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -29,11 +36,12 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
 	Context context;
 	Button startButton, sstopButton;
 	ProgressBar progress;
+	ImageView artImage;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		((MainUltraActivity)getActivity()).setCallback (this);
+		((MainUltraActivity) getActivity()).setCallback(this);
 		super.onCreate(savedInstanceState);
 	}
 
@@ -44,6 +52,7 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
 
 		playerFragmentCallback = (PlayerFragmentCallback) getActivity();
 		progress = (ProgressBar) getView().findViewById(R.id.progressFragment);
+		artImage = (ImageView) getView().findViewById(R.id.imageViewArt);
 		artistView = (TextView) getView().findViewById(R.id.artistTextFragment);
 		trackView = (TextView) getView().findViewById(R.id.trackTextFragment);
 		statusView = (TextView) getView().findViewById(R.id.statusInfoFragment);
@@ -163,7 +172,7 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
 			}
 		} else {
 			parseMediaStatus(mediaStatus);
-			
+
 		}
 
 	}
@@ -216,16 +225,28 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
 			} else if (statusObj.getPlayerStatus() != Params.STATUS_NONE) {
 				parseMediaStatus(statusObj.getPlayerStatus());
 				setCurrentTrack(statusObj.getArtist(), statusObj.getTrack());
+			} else {
+				setCurrentStatus(UtilsUltra.getDescriptionByStatus(context,
+						statusObj.getAsyncStatus()));
+
 			}
-			else
-			{
-				setCurrentStatus(UtilsUltra.getDescriptionByStatus(context, statusObj.getAsyncStatus()));
-				
-			}
-		}
-		else
-		{
+		} else {
 			setCurrentStatus("");
+		}
+	}
+
+	@Override
+	public void onImageBuffered() {
+		// TODO Auto-generated method stub
+		File artFile = new File(getActivity().getFilesDir(),
+				Params.TEMP_FILE_NAME);
+		if (artFile.exists()) {
+			BitmapFactory.Options opts = new BitmapFactory.Options();
+			opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			artImage.setImageBitmap(BitmapFactory.decodeFile(artFile
+					.getAbsolutePath()));
+		} else {
+			artImage.setImageResource(android.R.color.transparent);
 		}
 	}
 

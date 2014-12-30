@@ -268,4 +268,11 @@ public class MainUltraActivity extends FragmentActivity implements
 		mFragmentCallback = fragmentPlayer;
 	}
 
+	@Override
+	public void onImageBuffered() {
+		// TODO Auto-generated method stub
+		if (mFragmentCallback!=null)
+			mFragmentCallback.onImageBuffered();
+	}
+
 }

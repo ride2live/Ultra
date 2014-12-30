@@ -10,6 +10,7 @@ public interface ActivityToFragmentListener {
 	void onStatusChanged(String status);
 	void onStatusChanged(StatusObject stausObj);
 	void updateOnRebind (StatusObject statusObj);
+	void onImageBuffered();
 
 	
 	

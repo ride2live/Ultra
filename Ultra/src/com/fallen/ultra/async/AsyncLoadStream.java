@@ -51,7 +51,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			
 			uc.setUseCaches(true);
 			uc.setConnectTimeout(Params.CONNECTION_TIMEOUT);
-			uc.connect();
+			//uc.connect();
 			metaInt = UtilsUltra.getMetInt(uc);
 			UtilsUltra.printLog("metaInt " + metaInt, null, 0);
 			if (bufferBeforePlayback < metaInt + Params.MAX_METAINT_VALUE)
@@ -102,13 +102,25 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 					int metadataLenght = radioStream.read();
 
 					if (metadataLenght > 0) {
-
+						int byteSumMetadata = metadataLenght * 16;
+						int realyReadMetaData = 0;
 						byte[] metaDataBuffer = new byte[metadataLenght * 16];
-						int realyReadMetaData = radioStream.read(metaDataBuffer);
-						if (realyReadMetaData < metaDataBuffer.length)
-							UtilsUltra.printLog("CATCH YOU, BITCH, read while in metadata!", null, Log.ERROR);
-						String str = new String(metaDataBuffer, "UTF-8");
-						ContentValues metadataParsed = UtilsUltra.createBundleWithMetadata(str);
+						//String str = new String(metaDataBuffer, "UTF-8");
+						StringBuilder str = new StringBuilder();
+						
+						int realyReadMetaDataSum = 0;
+						while (realyReadMetaDataSum  < byteSumMetadata) {
+							realyReadMetaData = radioStream.read(metaDataBuffer, 0, metaDataBuffer.length);
+							realyReadMetaDataSum = realyReadMetaDataSum + realyReadMetaData;
+							String tempString  = new String(metaDataBuffer, "UTF-8");
+							if (realyReadMetaDataSum < byteSumMetadata )
+								metaDataBuffer = new byte [byteSumMetadata - realyReadMetaDataSum];
+							str.append(tempString);
+							
+						}
+					
+						
+						ContentValues metadataParsed = UtilsUltra.createBundleWithMetadata(str.toString());
 						String artist = metadataParsed.getAsString(Params.TRACK_ARTIST_KEY);
 						String track = metadataParsed.getAsString(Params.TRACK_SONG_KEY);
 						publishProgress(new StatusObject(Params.STATUS_NEW_TITLE, artist, track));

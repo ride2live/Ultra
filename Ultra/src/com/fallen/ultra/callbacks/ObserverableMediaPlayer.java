@@ -10,4 +10,5 @@ public interface ObserverableMediaPlayer {
 	void onBuffered();
 	boolean stopAndReleasePlayer();
 	boolean setCanceled();
+	void onPhoneAction(int intExtra);
 }

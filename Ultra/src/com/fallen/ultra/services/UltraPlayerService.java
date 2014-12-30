@@ -1,5 +1,7 @@
 package com.fallen.ultra.services;
 
+import java.io.File;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -15,16 +17,19 @@ import com.fallen.ultra.activities.MainUltraActivity;
 import com.fallen.ultra.async.AsyncCheckLegal;
 import com.fallen.ultra.async.AsyncImageLoader;
 import com.fallen.ultra.async.AsyncLoadStream;
+import com.fallen.ultra.callbacks.ImageLoader;
 import com.fallen.ultra.callbacks.Observer;
 import com.fallen.ultra.callbacks.ObserverableMediaPlayer;
 import com.fallen.ultra.callbacks.ServiceToActivityCallback;
 import com.fallen.ultra.creators.NotificationCreator;
 import com.fallen.ultra.creators.StatusObject;
+import com.fallen.ultra.listeners.IncomingCallReciever;
+import com.fallen.ultra.listeners.PhoneCallCallback;
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
 import com.fallen.ultra.utils.media.MediaPlayerExtended;
 
-public class UltraPlayerService extends Service implements Observer {
+public class UltraPlayerService extends Service implements Observer, ImageLoader, PhoneCallCallback {
 	private NotificationManager mNotificationManager;
 	// private MediaPlayer mMediaPlayer;
 	private final IBinder mBinder = new LocalPlayerBinder();
@@ -44,6 +49,8 @@ public class UltraPlayerService extends Service implements Observer {
 	public IBinder onBind(Intent intent) {
 		System.out.println("onBind Service");
 		statusStreamObject = new StatusObject();
+		//IncomingCallReciever phoneCallReciver = new IncomingCallReciever(this);
+		//registerReceiver(phoneCallReciver, null);
 		return mBinder;
 	}
 
@@ -58,6 +65,7 @@ public class UltraPlayerService extends Service implements Observer {
 		// TODO Auto-generated method stub
 		super.onRebind(intent);
 		System.out.println("onRebind service");
+		loadImage(currentArtist, currentTrack);
 		
 
 	
@@ -91,7 +99,16 @@ public class UltraPlayerService extends Service implements Observer {
 				UtilsUltra.printLog("onStrartCommand default");
 				break;
 			}
-		} else {
+
+		} 
+		else if (intent.hasExtra(Params.ACTION_FROM_BROADCAST))
+		{
+			UtilsUltra.printLog("ACTION_FROM_BROADCAST");
+			if (serviceToPlayerCallback!=null)
+				serviceToPlayerCallback.onPhoneAction(intent.getIntExtra(Params.ACTION_FROM_BROADCAST, 0));
+			
+		}
+		else {
 			UtilsUltra.printLog("onStrartCommand no extra");
 		}
 		System.out.println("startcomm");
@@ -218,6 +235,7 @@ public class UltraPlayerService extends Service implements Observer {
 				serviceToPlayerCallback.registerObserver(activity);
 			
 				mServiceToActivityCallback.onRebindStatus(statusStreamObject);
+				
 		}
 
 		if (activity == null && mAsycLoadStream != null) {
@@ -230,11 +248,7 @@ public class UltraPlayerService extends Service implements Observer {
 
 	@Override
 	public void update(StatusObject sObject) {
-		// TODO Auto-generated method stub
-		// onNewStreamTitleRetrieved
-		// onSocketStart
-		// onBuffered
-		// onconnecting
+
 		if (sObject.isAsync()) {
 			int status = sObject.getAsyncStatus();
 			switch (status) {
@@ -282,11 +296,14 @@ public class UltraPlayerService extends Service implements Observer {
 
 	private void loadImage(String artist, String track) {
 		// TODO Auto-generated method stub
+		File file = new File(getApplicationContext().getFilesDir(), Params.TEMP_FILE_NAME);
 		if (mServiceToActivityCallback!=null)
 		{
-			if (  artist!=null && !artist.equals(Params.NO_TITLE)&& track!=null)
+			
+			if (  artist!=null && !artist.equals(Params.NO_TITLE)&&!artist.equals("") && track!=null)
 			{
-				AsyncImageLoader async = new AsyncImageLoader();
+				
+				AsyncImageLoader async = new AsyncImageLoader(file, this);
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 					async.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, artist, track);
 				else
@@ -294,11 +311,30 @@ public class UltraPlayerService extends Service implements Observer {
 				
 				
 			}
+			else
+			{
+				UtilsUltra.printLog("artist wrong on load image");
+				file.delete();
+				onImageBuffered();
+			}
 		}
 	}
 
 	public StatusObject getStatusObject() {
 		return statusStreamObject;
+	}
+
+	@Override
+	public void onImageBuffered() {
+		// TODO Auto-generated method stub
+		if (mServiceToActivityCallback!=null)
+			mServiceToActivityCallback.onImageBuffered();
+	}
+
+	@Override
+	public void onRecievePhoneEvent(String action) {
+		// TODO Auto-generated method stub
+		UtilsUltra.printLog("RECIEVE PHONE CALL " +action);
 	}
 
 }
