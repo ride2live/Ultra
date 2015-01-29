@@ -34,7 +34,7 @@ public class Params {
 	public static final String TRACK_ARTIST_KEY = "artist_key";
 	public static final String TRACK_SONG_KEY = "song_key";
 	public static final String ULTRA_URL_HIGH = "http://mp3.nashe.ru/ultra-128.mp3";
-	public static final String ULTRA_URL_LOW = "http://83.242.238.196:8000/ultra-64.mp3";
+	public static final String ULTRA_URL_LOW = "http://mp3.nashe.ru/ultra-64.mp3";
 	public static final String NO_TITLE = "No Title";
 	public static final Object EMPTY_ARTIST_STRING = "";
 	public static final int ACTION_WRONG = -1;
