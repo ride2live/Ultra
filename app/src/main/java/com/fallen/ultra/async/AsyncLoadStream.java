@@ -27,7 +27,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 	OutputStream emulatingStream;
 
 	public AsyncLoadStream() {
-		observers = new ArrayList<Observer>();
+		observers = new ArrayList<>();
 	
 	}
 
@@ -35,7 +35,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 	protected Void doInBackground(String... params) {
 		URL url;
 
-		int metaInt = Params.NO_METAINT;
+		int metaInt;
 		int bytePreIntSum = 0;
 		int bufferedSum = 0;
 		int bufferBeforePlayback = Params.BUFFER_FOR_PLAYER_IN_BYTES;
@@ -60,7 +60,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			
 			radioStream = uc.getInputStream();
 			byte[] buffer = new byte[Params.DEFAULT_INPUTSTREAM_BUFFER_BYTES];
-			int bytesRealyRead = 0;
+			int bytesRealyRead;
 			int byteToRead = 1024;
 
 			
@@ -103,7 +103,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 
 					if (metadataLenght > 0) {
 						int byteSumMetadata = metadataLenght * 16;
-						int realyReadMetaData = 0;
+						int realyReadMetaData;
 						byte[] metaDataBuffer = new byte[metadataLenght * 16];
 						//String str = new String(metaDataBuffer, "UTF-8");
 						StringBuilder str = new StringBuilder();
@@ -190,7 +190,6 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 		try {
 			emulatingStream.write(responseFakeString.getBytes());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return emulatingStream;
@@ -231,26 +230,21 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 
 	@Override
 	protected void onPostExecute(Void result) {
-		// TODO Auto-generated method stub
-
 		super.onPostExecute(result);
 	}
 
 	@Override
 	public void registerObserver(Observer o) {
-		// TODO Auto-generated method stub
 		observers.add(o);
 	}
 
 	@Override
 	public void removeObserver(Observer o) {
-		// TODO Auto-generated method stub
 		observers.remove(o);
 	}
 
 	@Override
 	public void notifyObservers(StatusObject sObject) {
-		// TODO Auto-generated method stub
 		for (Observer observer : observers) {
 			if (observer!=null)
 				observer.update(sObject);
