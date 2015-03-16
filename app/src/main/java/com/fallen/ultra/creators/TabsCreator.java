@@ -10,13 +10,12 @@ public  abstract class TabsCreator {
 
 	
 	public final static ActionBar buildActionBar(ActionBar actionTabsBar, TabChangeListener tapChangeListener) {
-		// TODO Auto-generated method stub
-        Tab javaTab = actionTabsBar.newTab();
+		Tab javaTab = actionTabsBar.newTab();
 		Tab androidTab = actionTabsBar.newTab();
 		Tab patternsTab = actionTabsBar.newTab();
-		javaTab.setText("Плеер");
-		androidTab.setText("Ultra телетайп");
-		patternsTab.setText("Ultra новое");
+		javaTab.setText("пїЅпїЅпїЅпїЅпїЅ");
+		androidTab.setText("Ultra пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
+		patternsTab.setText("Ultra пїЅпїЅпїЅпїЅпїЅ");
 
 		Tab [] alltabs = new Tab[] {javaTab, androidTab, patternsTab};
 		MyTabListener tabListener = new MyTabListener(tapChangeListener);

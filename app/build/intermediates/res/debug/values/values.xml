@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">Ultra</string>
+    <string name="buffering">буферизация</string>
+    <string name="connecting">соединение</string>
+    <string name="error">ошибка</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="playing">воспроизведение</string>
+    <string name="stopped">остановлено</string>
+    <string name="unavailable">нет соединения</string>
+    <string name="volume">громкость</string>
+    <!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio/app/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="AppBaseTheme" parent="android:Theme.Black">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+</resources>
