@@ -1,0 +1,4 @@
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\classes\release
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\release\support-annotations-21.0.3-9e7b23ba232075698c1ce43f8602f517a928c560.jar
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\release\internal_impl-21.0.3-4ff7e9d471623f987249c0508c57696b78093109.jar
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\release\classes-693c2a4c59abaa8a7d8e556d246a5f6d10dc4ed6.jar
