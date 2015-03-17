@@ -7,7 +7,6 @@ import com.fallen.ultra.utils.UtilsUltra;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.sax.StartElementListener;
 import android.telephony.TelephonyManager;
 
 public class IncomingCallReciever extends BroadcastReceiver{
@@ -32,10 +31,10 @@ public class IncomingCallReciever extends BroadcastReceiver{
 	private void checkIntent(Intent intent) {
 		// TODO Auto-generated method stub
 		UtilsUltra.printLog("call recieved " + intent.getStringExtra(TelephonyManager.EXTRA_STATE));
-		
-		String extraState = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-		if (extraState!=null)
-			parseState(extraState);
+
+        String extraState = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+        if (extraState!=null)
+            parseState(extraState);
 		 
 	}
 
@@ -53,7 +52,7 @@ public class IncomingCallReciever extends BroadcastReceiver{
 		 }
 		 Intent serviceIntent = new Intent(context, UltraPlayerService.class);
 		 UtilsUltra.printLog("actionToService " + actionToService);
-		serviceIntent.putExtra(Params.ACTION_FROM_BROADCAST, actionToService);
+		serviceIntent.putExtra(Params.ACTION_FROM_BROADCAST_PHONE, actionToService);
 		if (context !=null)
 			context.startService(serviceIntent);
 	}

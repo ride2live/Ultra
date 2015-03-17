@@ -29,11 +29,11 @@ public final class R {
         public static final int imageViewArt=0x7f060005;
         public static final int logoview=0x7f060000;
         public static final int playback_controls=0x7f06000f;
-        public static final int progressFragment=0x7f060008;
+        public static final int progressFragment=0x7f060009;
         public static final int radioGroup1=0x7f06000a;
-        public static final int sstopInFragment=0x7f060007;
-        public static final int startInFragment=0x7f060006;
-        public static final int statusInfoFragment=0x7f060009;
+        public static final int sstopInFragment=0x7f060008;
+        public static final int startInFragment=0x7f060007;
+        public static final int statusInfoFragment=0x7f060006;
         public static final int stopButton=0x7f060012;
         public static final int trackLabel=0x7f060011;
         public static final int trackTextFragment=0x7f060004;

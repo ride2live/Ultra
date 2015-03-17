@@ -14,11 +14,11 @@ int id imageView1 0x7f060013
 int id imageViewArt 0x7f060005
 int id logoview 0x7f060000
 int id playback_controls 0x7f06000f
-int id progressFragment 0x7f060008
+int id progressFragment 0x7f060009
 int id radioGroup1 0x7f06000a
-int id sstopInFragment 0x7f060007
-int id startInFragment 0x7f060006
-int id statusInfoFragment 0x7f060009
+int id sstopInFragment 0x7f060008
+int id startInFragment 0x7f060007
+int id statusInfoFragment 0x7f060006
 int id stopButton 0x7f060012
 int id trackLabel 0x7f060011
 int id trackTextFragment 0x7f060004

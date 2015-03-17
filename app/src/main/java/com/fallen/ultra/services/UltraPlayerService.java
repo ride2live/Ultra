@@ -23,7 +23,6 @@ import com.fallen.ultra.callbacks.ObserverableMediaPlayer;
 import com.fallen.ultra.callbacks.ServiceToActivityCallback;
 import com.fallen.ultra.creators.NotificationCreator;
 import com.fallen.ultra.creators.StatusObject;
-import com.fallen.ultra.listeners.IncomingCallReciever;
 import com.fallen.ultra.listeners.PhoneCallCallback;
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
@@ -101,13 +100,20 @@ public class UltraPlayerService extends Service implements Observer,
 					break;
 				}
 
-			} else if (intent.hasExtra(Params.ACTION_FROM_BROADCAST)) {
-				UtilsUltra.printLog("ACTION_FROM_BROADCAST");
+			} else if (intent.hasExtra(Params.ACTION_FROM_BROADCAST_PHONE)) {
+				UtilsUltra.printLog("ACTION_FROM_BROADCAST_PHONE");
 				if (serviceToPlayerCallback != null)
 					serviceToPlayerCallback.onPhoneAction(intent.getIntExtra(
-							Params.ACTION_FROM_BROADCAST, 0));
+							Params.ACTION_FROM_BROADCAST_PHONE, 0));
 
-			} else {
+			}
+            else if (intent.hasExtra(Params.ACTION_FROM_BROADCAST_NOISY))
+            {
+                if (serviceToPlayerCallback != null)
+                    serviceToPlayerCallback.onNoisy();
+
+            }
+            else {
 				UtilsUltra.printLog("onStrartCommand no extra");
 			}
 		}

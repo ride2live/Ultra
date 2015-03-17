@@ -3,6 +3,7 @@ package com.fallen.ultra.utils.media;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.util.Log;
@@ -77,6 +78,7 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 		try {
 			
 			setDataSource(context, Uri.parse(Params.LOCAL_SOCKET_STREAM_IP));
+            setAudioStreamType(AudioManager.STREAM_MUSIC);
 			isSetDataSuccess = true;
 			setOnPreparedListener(new OnPreparedListener() {
 				
@@ -122,7 +124,7 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 			isSuccess = true;
 			notifyObservers(new StatusObject(Params.STATUS_STOPED, false));
 		} catch (Exception e) {
-			UtilsUltra.printLog("Something realy bad happens! Cant stop media", null, Log.ERROR);
+			UtilsUltra.printLog("Something really bad happens! Cant stop media", null, Log.ERROR);
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -168,5 +170,17 @@ public class MediaPlayerExtended extends MediaPlayer implements ObserverableMedi
 			
 	}
 
-	
+    @Override
+    public void onNoisy() {
+        if (context!=null && isPlaying())
+        {
+            UtilsUltra.printLog("On Noisy set volume " );
+            stopAndReleasePlayer();
+        }
+
+
+
+    }
+
+
 }

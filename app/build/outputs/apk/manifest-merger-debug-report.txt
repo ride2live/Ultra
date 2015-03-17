@@ -81,7 +81,17 @@ action#android.intent.action.PHONE_STATE
 ADDED from AndroidManifest.xml:41:17
 	android:name
 		ADDED from AndroidManifest.xml:41:25
-service#com.fallen.ultra.services.UltraPlayerService
-ADDED from AndroidManifest.xml:45:9
+receiver#com.fallen.ultra.listeners.NoisyReceiver
+ADDED from AndroidManifest.xml:44:9
 	android:name
-		ADDED from AndroidManifest.xml:45:18
+		ADDED from AndroidManifest.xml:44:19
+intent-filter#android.media.AUDIO_BECOMING_NOISY
+ADDED from AndroidManifest.xml:45:13
+action#android.media.AUDIO_BECOMING_NOISY
+ADDED from AndroidManifest.xml:46:17
+	android:name
+		ADDED from AndroidManifest.xml:46:25
+service#com.fallen.ultra.services.UltraPlayerService
+ADDED from AndroidManifest.xml:50:9
+	android:name
+		ADDED from AndroidManifest.xml:50:18
