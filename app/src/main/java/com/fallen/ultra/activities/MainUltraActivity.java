@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -35,7 +36,8 @@ public class MainUltraActivity extends FragmentActivity implements
 	private int currentQualityKey;
 	StatusObject statusObjectRebinded;
 
-	@Override
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);

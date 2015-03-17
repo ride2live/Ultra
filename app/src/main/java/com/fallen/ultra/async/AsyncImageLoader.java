@@ -170,7 +170,7 @@ public class AsyncImageLoader extends AsyncTask<String, Void, File> {
 			// lastFmParser.next()
 			// lastFmParser.require(XmlPullParser.START_TAG, null, firstTag);
 			boolean isImageFound = false;
-			while (lastFmParser.next() != XmlPullParser.END_DOCUMENT && !isImageFound) {
+			while (lastFmParser !=null && lastFmParser.next() != XmlPullParser.END_DOCUMENT && !isImageFound) {
 
 				// UtilsUltra.printLog(lastFmParser.getText() +" getText");
 				// if (lastFmParser.getName().equals(trackTag))
