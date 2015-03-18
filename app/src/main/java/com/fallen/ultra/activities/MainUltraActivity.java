@@ -184,7 +184,7 @@ public class MainUltraActivity extends FragmentActivity implements
 
     @Override
     public void onUnbindService() {
-        // TODO Auto-generated method stub
+
 
     }
 
