@@ -14,6 +14,8 @@ public class Params {
 	public static final String ACTION_FROM_PLAYER_FRAGMENT = "ACTION_FROM_PLAYER_FRAGMENT";
 	public static final int BUTTON_START_KEY = 200;
 	public static final int BUTTON_STOP_KEY = 201;
+    public static final int BUTTON_FAV_OFF = 202;
+    public static final int BUTTON_FAV_ON = 203;
 	public static final String ICY_KEY = "icy-metaint";
 	public static final String SOCKET_PORT = "8889";
 	public static final String LOCAL_SOCKET_STREAM_IP = "http://127.0.0.1:" + SOCKET_PORT;
