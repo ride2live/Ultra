@@ -29,6 +29,7 @@ public class MainUltraActivity extends FragmentActivity implements
     private ServiceConnection servCon;
     private UltraPlayerService playerService;
 
+    StatusObject currentStatusObject;
     //ViewPager pager;
     private boolean isServiceBinded = false;
     private ActivityToFragmentListener mFragmentCallback;
@@ -62,9 +63,6 @@ public class MainUltraActivity extends FragmentActivity implements
 
     @Override
     protected void onResume() {
-        // if (servCon == null)
-        // settingUpServiceConnection();
-
         Intent intent = UtilsUltra.createServiceIntentFromActivity(
                 getApplicationContext(), Params.FLAG_BIND_ACTIVITY);
         if (servCon == null)
@@ -75,12 +73,10 @@ public class MainUltraActivity extends FragmentActivity implements
     }
 
     private void settingUpServiceConnection() {
-        // TODO Auto-generated method stub
         servCon = new ServiceConnection() {
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                // TODO Auto-generated method stub
                 System.out.println("onServiceDisconnected");
                 isServiceBinded = false;
                 if (playerService != null)
@@ -107,8 +103,6 @@ public class MainUltraActivity extends FragmentActivity implements
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
-
         if (isServiceBinded && servCon != null) {
 
             unbindService(servCon);
@@ -132,8 +126,7 @@ public class MainUltraActivity extends FragmentActivity implements
 
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
-        System.out.println("Activity onDestr");
+        System.out.println("Activity onDestroy");
         super.onDestroy();
     }
 
@@ -144,7 +137,7 @@ public class MainUltraActivity extends FragmentActivity implements
 //
 //	}
 
-    public void start() {
+    public void sendStartIntent() {
         Intent intent = UtilsUltra.createServiceIntentFromActivity(
                 getApplicationContext(), Params.FLAG_PLAY, currentQualityKey);
         startService(intent);
@@ -166,16 +159,22 @@ public class MainUltraActivity extends FragmentActivity implements
     private void sendToService(int action) {
         switch (action) {
             case Params.BUTTON_START_KEY:
-                start();
+                sendStartIntent();
                 break;
             case Params.BUTTON_STOP_KEY:
                 stop();
                 break;
 
 
+            case Params.BUTTON_FAV_ON:
+
+                break;
+
+            case Params.BUTTON_FAV_OFF:
+                break;
 
             default:
-                Log.e("ultraerr", "MainUltraActivity wrong action button id");
+                Log.e("ultraerr", "MainUltraActivity wrong action button id " + action);
                 break;
         }
 
@@ -206,19 +205,16 @@ public class MainUltraActivity extends FragmentActivity implements
             // rebind
             mFragmentCallback.updateOnRebind(statusObjectRebinded);
         // updateAllFramentFields();
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onFragmentCreatedNoInit() {
-        // TODO Auto-generated method stub
         mFragmentCallback = null;
     }
 
 //	@Override
 //	public void onStatusChanged(int status) {
-//		// TODO Auto-generated method stub
 //		if (mFragmentCallback != null) {
 //			currentStringStatus = UtilsUltra.getStatusDescription(
 //					getResources(), status);
@@ -232,7 +228,7 @@ public class MainUltraActivity extends FragmentActivity implements
 
         currentQualityKey = qualityKey;
         /*
-		 * switch (qualityKey) { case Params.QUALITY_128: qualityURL =
+         * switch (qualityKey) { case Params.QUALITY_128: qualityURL =
 		 * Params.ULTRA_URL_HIGH; break; case Params.QUALITY_64: qualityURL =
 		 * Params.ULTRA_URL_LOW; break; default: qualityURL =
 		 * Params.ULTRA_URL_HIGH; break; }
@@ -246,6 +242,7 @@ public class MainUltraActivity extends FragmentActivity implements
         // mFragmentCallback.onStatusChanged();
         if (mFragmentCallback != null)
             mFragmentCallback.onStatusChanged(sObject);
+        currentStatusObject = sObject;
     }
 
     @Override

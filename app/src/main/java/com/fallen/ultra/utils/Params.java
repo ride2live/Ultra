@@ -73,10 +73,13 @@ public class Params {
 	public static String LASTFM_TRACK_CORRECTION = "http://ws.audioscrobbler.com/2.0/?method=track.getCorrection";
 	public static String LASTFM_ARTIST_CORRECTION = "http://ws.audioscrobbler.com/2.0/?method=artist.getCorrection";
 	
-	
-	
-	
-	
+	//DB error statements
+    public static final int DB_ERROR_ON_INSERT = 600;
+    public static final int DB_ADD_SUCCESS = 601;
+    public static final int DB_IDLE = 603;
+    public static final int DB_IS_NULL = 604;
+    public static final int DB_ARTIST_DELETED = 605;
+    public static final int DB_ERROR_ON_DELETE = 606;
 	
 	
 	

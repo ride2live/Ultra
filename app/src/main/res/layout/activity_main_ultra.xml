@@ -4,8 +4,10 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="#303030"
-    tools:context="${relativePackage}.${activityClass}" >
+    tools:context="${relativePackage}.${activityClass}"
+    android:id="@+id/main_activity_relative">
         <LinearLayout
+            android:visibility="gone"
            android:id="@+id/logoview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

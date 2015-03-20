@@ -35,11 +35,9 @@ public class UltraPlayerService extends Service implements Observer,
 	private final IBinder mBinder = new LocalPlayerBinder();
 	private ServiceToActivityCallback mServiceToActivityCallback;
 	private AsyncLoadStream mAsycLoadStream;
-	private String currentArtist;
-
 	// object for newly binded or rebinded activities
 	private StatusObject statusStreamObject;
-
+    private String currentArtist;
 	private String currentTrack;
 	private ObserverableMediaPlayer serviceToPlayerCallback;
 	private boolean isRunningBackground = false;
@@ -298,7 +296,6 @@ public class UltraPlayerService extends Service implements Observer,
 	}
 
 	private void loadImage(String artist, String track) {
-		// TODO Auto-generated method stub
 		File file = new File(getApplicationContext().getFilesDir(),
 				Params.TEMP_FILE_NAME);
 		if (mServiceToActivityCallback != null) {
