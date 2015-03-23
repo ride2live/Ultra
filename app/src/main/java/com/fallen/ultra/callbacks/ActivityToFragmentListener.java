@@ -11,6 +11,7 @@ public interface ActivityToFragmentListener {
 	void onStatusChanged(StatusObject stausObj);
 	void updateOnRebind (StatusObject statusObj);
 	void onImageBuffered();
+    void onFavoriteDefine (boolean isAlreadyInFav);
 
 	
 	

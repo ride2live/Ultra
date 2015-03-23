@@ -124,22 +124,7 @@ public abstract class UtilsUltra {
 
 
 
-	public static int getMetInt(URLConnection uc) {
-		// TODO Auto-generated method stub
-		int metaInt = 0;
-		try {
-			metaInt = Integer.parseInt(uc.getHeaderField("icy-metaint"));
-			UtilsUltra.printLog("ICY retrieved " + metaInt, null, 0);
-			if (metaInt == 0)
-				return Params.NO_METAINT;
-		} catch (Exception e) {
-			UtilsUltra.printLog("ICY exeprion occured " + metaInt, null,
-					Log.WARN);
-			e.printStackTrace();
-			return Params.NO_METAINT;
-		}
-		return metaInt;
-	}
+
 
 	/**
 	 * will return quality param (like radio button clicked) or if not exist -

@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
@@ -52,7 +53,7 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			uc.setUseCaches(true);
 			uc.setConnectTimeout(Params.CONNECTION_TIMEOUT);
 			//uc.connect();
-			metaInt = UtilsUltra.getMetInt(uc);
+			metaInt = getMetInt(uc);
 			UtilsUltra.printLog("metaInt " + metaInt, null, 0);
 			if (bufferBeforePlayback < metaInt + Params.MAX_METAINT_VALUE)
 				bufferBeforePlayback = metaInt + Params.MAX_METAINT_VALUE;
@@ -251,4 +252,20 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 		}
 		
 	}
+    public  int getMetInt(HttpURLConnection uc) {
+        // TODO Auto-generated method stub
+        int metaInt = 0;
+        try {
+            metaInt = Integer.parseInt(uc.getHeaderField("icy-metaint"));
+            UtilsUltra.printLog("ICY retrieved " + metaInt, null, 0);
+            if (metaInt == 0)
+                return Params.NO_METAINT;
+        } catch (Exception e) {
+            UtilsUltra.printLog("ICY exeprion occured " + metaInt, null,
+                    Log.WARN);
+            e.printStackTrace();
+            return Params.NO_METAINT;
+        }
+        return metaInt;
+    }
 }

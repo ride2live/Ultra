@@ -16,6 +16,7 @@ import com.fallen.ultra.callbacks.Observer;
 import com.fallen.ultra.callbacks.PlayerFragmentCallback;
 import com.fallen.ultra.callbacks.ServiceToActivityCallback;
 import com.fallen.ultra.creators.StatusObject;
+import com.fallen.ultra.database.SQLiteDB;
 import com.fallen.ultra.fragments.FragmentPlayer;
 import com.fallen.ultra.services.UltraPlayerService;
 import com.fallen.ultra.services.UltraPlayerService.LocalPlayerBinder;
@@ -35,6 +36,8 @@ public class MainUltraActivity extends FragmentActivity implements
     private ActivityToFragmentListener mFragmentCallback;
     private int currentQualityKey;
     StatusObject statusObjectRebinded;
+    private String currentArtist, currentTrack;
+    SQLiteDB myDb;
 
 
     @Override
@@ -167,10 +170,11 @@ public class MainUltraActivity extends FragmentActivity implements
 
 
             case Params.BUTTON_FAV_ON:
-
+                sendArtistToDb();
                 break;
 
             case Params.BUTTON_FAV_OFF:
+                sendArtistToDb();
                 break;
 
             default:
@@ -179,6 +183,32 @@ public class MainUltraActivity extends FragmentActivity implements
         }
 
         // }
+    }
+
+    private void sendArtistToDb() {
+        if (myDb==null)
+            myDb = new SQLiteDB(this);
+        if (currentStatusObject!=null && mFragmentCallback!=null) {
+            int resultCode = myDb.actionFavArtist(currentArtist, currentTrack);
+            UtilsUltra.printLog("result code on Fav to Db" + resultCode);
+            switch (resultCode)
+            {
+                case Params.DB_ADD_SUCCESS:
+                    mFragmentCallback.onFavoriteDefine(true);
+                    break;
+                case Params.DB_ARTIST_DELETED:
+                    mFragmentCallback.onFavoriteDefine(false);
+                    break;
+                default:
+                    UtilsUltra.printLog("error occurred in DB action code =" + resultCode, Params.DEFAULT_LOG_TYPE, Log.ERROR);
+                    break;
+            }
+        }
+        else
+        {
+            UtilsUltra.printLog("Status object is null");
+        }
+
     }
 
     @Override
@@ -240,8 +270,20 @@ public class MainUltraActivity extends FragmentActivity implements
     public void update(StatusObject sObject) {
         // TODO Auto-generated method stub
         // mFragmentCallback.onStatusChanged();
-        if (mFragmentCallback != null)
+        if (mFragmentCallback != null) {
             mFragmentCallback.onStatusChanged(sObject);
+            if (sObject.getAsyncStatus() == Params.STATUS_NEW_TITLE) {
+                currentArtist = sObject.getArtist();
+                currentTrack = sObject.getTrack();
+                if (myDb ==null)
+                    myDb = new SQLiteDB(this);
+                mFragmentCallback.onFavoriteDefine(myDb.checkIfAlreadyAdded(currentArtist,currentTrack));
+                //mFragmentCallback.onTitleChanged(currentArtist, currentTrack);
+
+
+            }
+        }
+
         currentStatusObject = sObject;
     }
 

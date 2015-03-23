@@ -33,6 +33,9 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
     PlayerFragmentCallback playerFragmentCallback;
     TextView artistView, trackView, statusView;
     int current_quality_key = Params.QUALITY_DEFAULT_KEY;
+
+
+
     Context context;
     Button startButton, sstopButton;
     ImageButton starOnButton, starOffButton;
@@ -101,38 +104,57 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
 
     @Override
     public void onButtonClicked(int actionFromButton) {
-        switch (actionFromButton) {
-            case Params.BUTTON_FAV_OFF:
-                switchFav(false);
-                break;
-            case Params.BUTTON_FAV_ON:
-                switchFav(true);
-                break;
-            default:
-
-                break;
-        }
+//        switch (actionFromButton) {
+//            case Params.BUTTON_FAV_OFF:
+//                switchFav(false);
+//                break;
+//            case Params.BUTTON_FAV_ON:
+//                switchFav(true);
+//                break;
+//            default:
+//
+//                break;
+//        }
         playerFragmentCallback.buttonClicked(actionFromButton);
 
 
     }
+    @Override
+    public void onFavoriteDefine(boolean isAlreadyInFav) {
+            setFavoritesButtonState (isAlreadyInFav);
 
-    private void switchFav(boolean isFav) {
-        if (!currentArtist.equals(Params.NO_TITLE) && !currentTitle.equals(Params.NO_TITLE)) {
-            if (isFav) {
-                starOnButton.setVisibility(View.GONE);
-                starOffButton.setVisibility(View.VISIBLE);
-            } else {
+
+    }
+
+    private void setFavoritesButtonState(boolean isAlreadyInFav) {
+
+        if (isAlreadyInFav) {
                 starOnButton.setVisibility(View.VISIBLE);
                 starOffButton.setVisibility(View.GONE);
+            } else {
+                starOnButton.setVisibility(View.GONE);
+                starOffButton.setVisibility(View.VISIBLE);
             }
-        } else if (context != null) {
-            Toast.makeText(context, "Исполнитель и трек не загружены", Toast.LENGTH_SHORT).show();
-        }
+    }
+
+    private void switchFav(boolean isFav) {
+//        if (!currentArtist.equals(Params.NO_TITLE) && !currentTitle.equals(Params.NO_TITLE)) {
+//            if (isFav) {
+//                starOnButton.setVisibility(View.GONE);
+//                starOffButton.setVisibility(View.VISIBLE);
+//            } else {
+//                starOnButton.setVisibility(View.VISIBLE);
+//                starOffButton.setVisibility(View.GONE);
+//            }
+//        } else if (context != null) {
+//            Toast.makeText(context, "Исполнитель и трек не загружены", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     public void setCurrentTrack(String artist, String title) {
         // TODO Auto-generated method stub
+        starOnButton.setVisibility(View.GONE);
+        starOffButton.setVisibility(View.GONE);
         currentTitle = title;
         currentArtist = artist;
         this.artistView.setText(artist);
@@ -150,6 +172,9 @@ public class FragmentPlayer extends android.support.v4.app.Fragment implements
     public void onTitleChanged(String artist, String title) {
         // TODO Auto-generated method stub
         setCurrentTrack(artist, title);
+        starOnButton.setVisibility(View.GONE);
+        starOffButton.setVisibility(View.GONE);
+
     }
 
     @Override
