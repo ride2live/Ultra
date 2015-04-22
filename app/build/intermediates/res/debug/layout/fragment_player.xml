@@ -72,7 +72,25 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:clickable="true"
+                    android:id="@+id/favoritesButtonOff"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="visible"
+                    android:src="@android:drawable/star_big_off" />
 
+                <ImageView
+                    android:clickable="true"
+                    android:id="@+id/favoritesButtonOn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@android:drawable/star_big_on"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <ImageView
 
@@ -86,25 +104,7 @@
                 android:src="@drawable/ultra_400400"/>
 
 
-                <ImageButton
-                    android:layout_margin="10dp"
-                    android:id="@+id/favoritesButtonOff"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:visibility="gone"
-                    android:src="@android:drawable/star_big_off" />
 
-                <ImageButton
-                    android:layout_margin="10dp"
-                    android:id="@+id/favoritesButtonOn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:src="@android:drawable/star_big_on"
-                    android:visibility="gone" />
 
 
 
@@ -170,6 +170,7 @@
                     android:visibility="gone" />
 
             </RelativeLayout>
+
             <!--<Button-->
                 <!--android:id="@+id/buttonstatus"-->
                 <!--android:layout_width="wrap_content"-->

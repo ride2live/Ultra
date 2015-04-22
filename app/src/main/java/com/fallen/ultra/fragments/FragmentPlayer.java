@@ -37,7 +37,7 @@ public class FragmentPlayer extends Fragment implements
 
     Context context;
     Button startButton, sstopButton, listButton, buttonstatus;
-    ImageButton starOnButton, starOffButton;
+    ImageView starOnButton, starOffButton;
     ProgressBar progress;
     ImageView artImage;
     private String currentTitle = Params.NO_TITLE;
@@ -56,8 +56,8 @@ public class FragmentPlayer extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         context = getActivity();
-        starOnButton = (ImageButton) getView().findViewById(R.id.favoritesButtonOn);
-        starOffButton = (ImageButton) getView().findViewById(R.id.favoritesButtonOff);
+        starOnButton = (ImageView) getView().findViewById(R.id.favoritesButtonOn);
+        starOffButton = (ImageView) getView().findViewById(R.id.favoritesButtonOff);
         playerFragmentCallback = (PlayerFragmentCallback) getActivity();
         progress = (ProgressBar) getView().findViewById(R.id.progressFragment);
         artImage = (ImageView) getView().findViewById(R.id.imageViewArt);

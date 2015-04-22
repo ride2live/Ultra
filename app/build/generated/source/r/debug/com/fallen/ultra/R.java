@@ -28,11 +28,11 @@ public final class R {
         public static final int chooser64=0x7f070007;
         public static final int deleteRowButton=0x7f07001b;
         public static final int favListView=0x7f070008;
-        public static final int favoritesButtonOff=0x7f07000d;
-        public static final int favoritesButtonOn=0x7f07000e;
+        public static final int favoritesButtonOff=0x7f07000c;
+        public static final int favoritesButtonOn=0x7f07000d;
         public static final int fragmentHolder=0x7f070003;
         public static final int imageView1=0x7f07001c;
-        public static final int imageViewArt=0x7f07000c;
+        public static final int imageViewArt=0x7f07000e;
         public static final int listFavButton=0x7f070013;
         public static final int logoview=0x7f070001;
         public static final int main_activity_relative=0x7f070000;

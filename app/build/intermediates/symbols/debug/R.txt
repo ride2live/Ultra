@@ -13,11 +13,11 @@ int id chooser192 0x7f070005
 int id chooser64 0x7f070007
 int id deleteRowButton 0x7f07001b
 int id favListView 0x7f070008
-int id favoritesButtonOff 0x7f07000d
-int id favoritesButtonOn 0x7f07000e
+int id favoritesButtonOff 0x7f07000c
+int id favoritesButtonOn 0x7f07000d
 int id fragmentHolder 0x7f070003
 int id imageView1 0x7f07001c
-int id imageViewArt 0x7f07000c
+int id imageViewArt 0x7f07000e
 int id listFavButton 0x7f070013
 int id logoview 0x7f070001
 int id main_activity_relative 0x7f070000
