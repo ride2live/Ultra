@@ -17,43 +17,98 @@ import com.fallen.ultra.activities.MainUltraActivity;
 import com.fallen.ultra.async.AsyncCheckLegal;
 import com.fallen.ultra.async.AsyncImageLoader;
 import com.fallen.ultra.async.AsyncLoadStream;
+import com.fallen.ultra.callbacks.AsyncToServiceCallback;
 import com.fallen.ultra.callbacks.ImageLoader;
-import com.fallen.ultra.callbacks.Observer;
-import com.fallen.ultra.callbacks.ObserverableMediaPlayer;
+import com.fallen.ultra.callbacks.PlayerToServiceCallBack;
 import com.fallen.ultra.callbacks.ServiceToActivityCallback;
+import com.fallen.ultra.com.fallen.ultra.model.StatusObjectPlayer;
+import com.fallen.ultra.com.fallen.ultra.model.TempAsyncStatus;
 import com.fallen.ultra.creators.NotificationCreator;
-import com.fallen.ultra.creators.StatusObject;
+import com.fallen.ultra.com.fallen.ultra.model.StatusObjectOverall;
 import com.fallen.ultra.listeners.PhoneCallCallback;
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
 import com.fallen.ultra.utils.media.MediaPlayerExtended;
+import com.fallen.ultra.callbacks.ServiceToPlayerCallback;
 
-public class UltraPlayerService extends Service implements Observer,
-		ImageLoader, PhoneCallCallback {
+public class UltraPlayerService extends Service implements
+		ImageLoader, PhoneCallCallback, AsyncToServiceCallback, PlayerToServiceCallBack {
 	private NotificationManager mNotificationManager;
 	// private MediaPlayer mMediaPlayer;
 	private final IBinder mBinder = new LocalPlayerBinder();
-	private ServiceToActivityCallback mServiceToActivityCallback;
+	private ServiceToActivityCallback serviceToActivityCallback;
 	private AsyncLoadStream mAsycLoadStream;
 	// object for newly binded or rebinded activities
-	private StatusObject statusStreamObject;
+	private StatusObjectOverall statusOveralObject;
     private String currentArtist;
 	private String currentTrack;
-	private ObserverableMediaPlayer serviceToPlayerCallback;
+	private ServiceToPlayerCallback serviceToPlayerCallback;
 	private boolean isRunningBackground = false;
-	private Observer activityObserver;
+    private String currentQuality;
 
-	@Override
+    @Override
 	public IBinder onBind(Intent intent) {
 		System.out.println("onBind Service");
-		statusStreamObject = new StatusObject();
+		statusOveralObject = new StatusObjectOverall();
 		// IncomingCallReciever phoneCallReciver = new
 		// IncomingCallReciever(this);
 		// registerReceiver(phoneCallReciver, null);
 		return mBinder;
 	}
 
-	public class LocalPlayerBinder extends Binder {
+    @Override
+    public void onStatusChanged(TempAsyncStatus tempAsyncStatus) {
+        int status = tempAsyncStatus.getStatus();
+        statusOveralObject.setStatusAsync(status);
+        switch (status) {
+            case Params.STATUS_BUFFERING:
+                if (serviceToPlayerCallback != null)
+                    serviceToPlayerCallback.onBuffered();
+                createNotify();
+                break;
+            case Params.STATUS_NEW_TITLE:
+                if (statusOveralObject.isRecconecting())
+                    statusOveralObject.setRecconecting(false);
+                currentArtist = tempAsyncStatus.getArtist();
+                currentTrack = tempAsyncStatus.getTrack();
+                loadImage(currentArtist, currentTrack);
+                statusOveralObject.setArtist(currentArtist);
+                statusOveralObject.setTrack(currentTrack);
+                updateNotify();
+                break;
+            case Params.STATUS_SOCKET_CREATING:
+                UtilsUltra.printLog("status socket created recieved");
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (serviceToPlayerCallback != null)
+                            serviceToPlayerCallback.onSocketCreated();
+                    }
+                }, 1000);
+                break;
+            case Params.STATUS_STREAM_ENDS:
+				stopStream();
+                break;
+
+
+            default:
+                break;
+        }
+        if (serviceToActivityCallback!=null && status!=Params.STATUS_SOCKET_CREATING)
+            serviceToActivityCallback.onUpdateStatus(statusOveralObject);
+    }
+
+    @Override
+    public void onStatusPlayerChange(StatusObjectPlayer statusObjectPlayer) {
+        if (statusOveralObject!=null ) {
+            statusOveralObject.setStatusPlayer(statusObjectPlayer.getPlayerStatus());
+            if (serviceToActivityCallback !=null)
+                serviceToActivityCallback.onUpdateStatus(statusOveralObject);
+        }
+    }
+
+    public class LocalPlayerBinder extends Binder {
 		public UltraPlayerService getService() {
 			return UltraPlayerService.this;
 		}
@@ -83,16 +138,23 @@ public class UltraPlayerService extends Service implements Observer,
 				switch (flagToAction) {
 				case Params.FLAG_PLAY:
 					UtilsUltra.printLog("onStrartCommand play");
-					String qualityUrl = Params.ULTRA_URL_HIGH;
-					if (intent.hasExtra(Params.KEY_PREFERENCES_QUALITY_FIELD))
-						qualityUrl = intent
-								.getStringExtra(Params.KEY_PREFERENCES_QUALITY_FIELD);
-					playStream(qualityUrl);
+                    setNewCurrentGuality(intent);
+                    playStream();
 					break;
 				case Params.FLAG_STOP:
 					UtilsUltra.printLog("onStrartCommand stop");
-					stopStream();
+                    if (statusOveralObject!=null)
+                        statusOveralObject.setStatusAsync(Params.STATUS_STOPPING_IN_PROCESS);
 
+                    stopStream();
+                    break;
+                case Params.FLAG_RESTART:
+                    UtilsUltra.printLog("onStrartCommand restart");
+                    if (statusOveralObject!=null)
+                        statusOveralObject.setRecconecting(true);
+                    setNewCurrentGuality(intent);
+                    stopStream();
+                    break;
 				default:
 					UtilsUltra.printLog("onStrartCommand default");
 					break;
@@ -118,20 +180,27 @@ public class UltraPlayerService extends Service implements Observer,
 		System.out.println("startcomm");
 		return START_NOT_STICKY;
 	}
+    public void playStream()
+    {
+        if (serviceToPlayerCallback == null) {
+            serviceToPlayerCallback = new MediaPlayerExtended(this, this);
 
-	public void playStream(String qualityURL) {
-		if (serviceToPlayerCallback == null) {
-			serviceToPlayerCallback = new MediaPlayerExtended(this);
-			serviceToPlayerCallback.registerObserver(this);
-			serviceToPlayerCallback.registerObserver(activityObserver);
-		}
+        }
 
-		if (mAsycLoadStream == null) {
-			mAsycLoadStream = new AsyncLoadStream();
-			mAsycLoadStream.registerObserver(this);
-			mAsycLoadStream.registerObserver(activityObserver);
-			mAsycLoadStream.execute(qualityURL);
-		}
+        if (mAsycLoadStream == null) {
+            mAsycLoadStream = new AsyncLoadStream(this);
+
+            mAsycLoadStream.execute(currentQuality);
+        }
+    }
+	public void setNewCurrentGuality(Intent intent) {
+        String qualityUrl = Params.ULTRA_URL_192;
+        if (intent.hasExtra(Params.KEY_PREFERENCES_QUALITY_FIELD)) {
+             qualityUrl= intent
+                    .getStringExtra(Params.KEY_PREFERENCES_QUALITY_FIELD);
+        }
+        currentQuality = qualityUrl;
+
 
 	}
 
@@ -194,15 +263,23 @@ public class UltraPlayerService extends Service implements Observer,
 			else
 				forceClose();
 		}
-		if (mAsycLoadStream != null) {
+
+        if (mAsycLoadStream != null) {
 			mAsycLoadStream.cancel(true);
 			mAsycLoadStream = null;
 		}
 		stoppingBackground();
+        TempAsyncStatus t = new TempAsyncStatus();
+        t.setStatus(Params.STATUS_STOPED);
+        onStatusChanged(t);
+        if (statusOveralObject!=null && statusOveralObject.isRecconecting())
+           playStream();
 
 	}
 
-	@Override
+
+
+    @Override
 	public void onCreate() {
 
 		System.out.println("onCreateService");
@@ -225,80 +302,62 @@ public class UltraPlayerService extends Service implements Observer,
 
 	public void setCallback(MainUltraActivity activity) {
 
-		this.mServiceToActivityCallback = activity;
-		this.activityObserver = activity;
-		if (activity == null) {
-			if (mAsycLoadStream != null)
-				mAsycLoadStream.removeObserver(activity);
-			if (serviceToPlayerCallback != null)
-				serviceToPlayerCallback.removeObserver(activity);
-		} else {
-			if (mAsycLoadStream != null)
-				mAsycLoadStream.registerObserver(activity);
-			if (serviceToPlayerCallback != null)
-				serviceToPlayerCallback.registerObserver(activity);
-
-			mServiceToActivityCallback.onRebindStatus(statusStreamObject);
-
-		}
-
-		if (activity == null && mAsycLoadStream != null) {
-
-			mAsycLoadStream.removeObserver(activity);
-		} else if (activity != null && mAsycLoadStream != null)
-			mAsycLoadStream.registerObserver(activity);
+		this.serviceToActivityCallback = activity;
+		//serviceToActivityCallback.onRebindStatus(statusOveralObject);
 
 	}
 
-	@Override
-	public void update(StatusObject sObject) {
-
-		if (sObject.isAsync()) {
-			int status = sObject.getAsyncStatus();
-			switch (status) {
-			case Params.STATUS_BUFFERING:
-				if (serviceToPlayerCallback != null)
-					serviceToPlayerCallback.onBuffered();
-				statusStreamObject.setAsyncStatus(status);
-				createNotify();
-				break;
-			case Params.STATUS_NEW_TITLE:
-
-				currentArtist = sObject.getArtist();
-				currentTrack = sObject.getTrack();
-				loadImage(currentArtist, currentTrack);
-				statusStreamObject.setArtist(currentArtist);
-				statusStreamObject.setTrack(currentTrack);
-				updateNotify();
-				break;
-			case Params.STATUS_SOCKET_CREATING:
-				UtilsUltra.printLog("status socket created recieved");
-				new Handler().postDelayed(new Runnable() {
-
-					@Override
-					public void run() {
-						if (serviceToPlayerCallback != null)
-							serviceToPlayerCallback.onSocketCreated();
-					}
-				}, 1000);
-				break;
-			case Params.STATUS_STREAM_ENDS:
-				statusStreamObject.setPlayerStatus(Params.STATUS_STOPED);
-				stopStream();
-
-			default:
-				break;
-			}
-		} else {
-			int status = sObject.getPlayerStatus();
-			statusStreamObject.setPlayerStatus(status);
-		}
-	}
+//	@Override
+//	public void updateAsyncStatusObject(StatusObjectOverall sObject) {
+//
+//		if (sObject.isAsync()) {
+//			int status = sObject.getStatusAsync();
+//			switch (status) {
+//			case Params.STATUS_BUFFERING:
+//				if (serviceToPlayerCallback != null)
+//					serviceToPlayerCallback.onBuffered();
+//				statusOveralObject.setStatusAsync(status);
+//				createNotify();
+//				break;
+//			case Params.STATUS_NEW_TITLE:
+//
+//				currentArtist = sObject.getArtist();
+//				currentTrack = sObject.getTrack();
+//				loadImage(currentArtist, currentTrack);
+//				statusOveralObject.setArtist(currentArtist);
+//				statusOveralObject.setTrack(currentTrack);
+//				updateNotify();
+//				break;
+//			case Params.STATUS_SOCKET_CREATING:
+//				UtilsUltra.printLog("status socket created recieved");
+//				new Handler().postDelayed(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						if (serviceToPlayerCallback != null)
+//							serviceToPlayerCallback.onSocketCreated();
+//					}
+//				}, 1000);
+//				break;
+//			case Params.STATUS_STREAM_ENDS:
+//				statusOveralObject.setPlayerStatus(Params.STATUS_STOPED);
+//				stopStream();
+//
+//			default:
+//				break;
+//			}
+//		} else {
+//			int status = sObject.getPlayerStatus();
+//			statusOveralObject.setPlayerStatus(status);
+//		}
+//	}
 
 	private void loadImage(String artist, String track) {
+        if (!UtilsUltra.getIsArtEnabledFromPreferences(getSharedPreferences(Params.KEY_PREFERENCES ,0)))
+            return;
 		File file = new File(getApplicationContext().getFilesDir(),
 				Params.TEMP_FILE_NAME);
-		if (mServiceToActivityCallback != null) {
+		if (serviceToActivityCallback != null) {
 
 			if (artist != null && !artist.equals(Params.NO_TITLE)
 					&& !artist.equals("") && track != null) {
@@ -318,15 +377,15 @@ public class UltraPlayerService extends Service implements Observer,
 		}
 	}
 
-	public StatusObject getStatusObject() {
-		return statusStreamObject;
+	public StatusObjectOverall getStatusObject() {
+		return statusOveralObject;
 	}
 
 	@Override
 	public void onImageBuffered() {
 		// TODO Auto-generated method stub
-		if (mServiceToActivityCallback != null)
-			mServiceToActivityCallback.onImageBuffered();
+		if (serviceToActivityCallback != null)
+			serviceToActivityCallback.onImageBuffered();
 	}
 
 	@Override

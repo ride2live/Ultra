@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_item_stream_select"
+        android:title="выбор стрима"
+        android:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_item_favorites"
+        android:title="избранное"
+        />
+    <item
+android:id="@+id/menu_load_art"
+        android:checked="true"
+        android:checkable="true"
+        android:title="загружать art"
+        />
+
+
+</menu>

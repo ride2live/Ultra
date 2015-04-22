@@ -1,5 +1,8 @@
 package com.fallen.ultra.activities;
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -7,37 +10,46 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.fallen.ultra.R;
-import com.fallen.ultra.callbacks.ActivityToFragmentListener;
-import com.fallen.ultra.callbacks.Observer;
+import com.fallen.ultra.callbacks.ActivityToFragmentFavListener;
+import com.fallen.ultra.callbacks.ActivityToFragmentPlayerListener;
+import com.fallen.ultra.callbacks.FavlistFragmentCallback;
+
 import com.fallen.ultra.callbacks.PlayerFragmentCallback;
 import com.fallen.ultra.callbacks.ServiceToActivityCallback;
-import com.fallen.ultra.creators.StatusObject;
+import com.fallen.ultra.com.fallen.ultra.model.StatusObjectOverall;
+import com.fallen.ultra.com.fallen.ultra.model.StatusObjectPlayer;
 import com.fallen.ultra.database.SQLiteDB;
+import com.fallen.ultra.fragments.DialogStreamsFragment;
+import com.fallen.ultra.fragments.FragmentFavList;
 import com.fallen.ultra.fragments.FragmentPlayer;
 import com.fallen.ultra.services.UltraPlayerService;
 import com.fallen.ultra.services.UltraPlayerService.LocalPlayerBinder;
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
 
-public class MainUltraActivity extends FragmentActivity implements
+public class MainUltraActivity extends Activity implements
         PlayerFragmentCallback, ServiceToActivityCallback,
-        Observer {
-    android.app.ActionBar actionTabsBar;
+        FragmentManager.OnBackStackChangedListener, FavlistFragmentCallback {
     private ServiceConnection servCon;
     private UltraPlayerService playerService;
 
-    StatusObject currentStatusObject;
+    StatusObjectOverall currentStatusObjectOverall;
     //ViewPager pager;
     private boolean isServiceBinded = false;
-    private ActivityToFragmentListener mFragmentCallback;
+    private ActivityToFragmentPlayerListener mFragmentPlayerCallback;
+    ActivityToFragmentFavListener fragmentFavCallBack;
     private int currentQualityKey;
-    StatusObject statusObjectRebinded;
-    private String currentArtist, currentTrack;
+    //private String currentArtist, currentTrack;
     SQLiteDB myDb;
+    FragmentManager manager;
+    private boolean isArtEnabled = true;
+
 
 
     @Override
@@ -45,34 +57,40 @@ public class MainUltraActivity extends FragmentActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_ultra);
+        currentQualityKey = UtilsUltra.getQualityFromPreferences(getSharedPreferences(Params.KEY_PREFERENCES, 0));
+        isArtEnabled = UtilsUltra.getIsArtEnabledFromPreferences(getSharedPreferences(Params.KEY_PREFERENCES,0));
+        createFragmentManager();
+        if (manager!=null) {
+            showPlayerFragment();
 
+        }
 
-        //FragmentManager manager;
+    }
 
-//		actionTabsBar = getActionBar();
-//		actionTabsBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-//		pager = (ViewPager) findViewById(R.id.pager);
-//		pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-//		TabsCreator.buildActionBar(actionTabsBar, this);
-        SharedPreferences myPreferences = getSharedPreferences(
-                Params.KEY_PREFERENCES_QUALITY, MODE_PRIVATE);
-        UtilsUltra.getQualityFromPreferences(myPreferences);
+    private void showPlayerFragment() {
+        FragmentTransaction ft =  manager.beginTransaction();
+        ft.add(R.id.fragmentHolder, new FragmentPlayer());
+        ft.commit();
 
-        Intent intent = new Intent(getApplicationContext(),
-                SplashActivity.class);
-        //startActivity(intent);
+    }
 
+    private void createFragmentManager() {
+        manager = getFragmentManager();
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
+        SharedPreferences myPreferences = getSharedPreferences(
+                Params.KEY_PREFERENCES, MODE_PRIVATE);
+        UtilsUltra.getQualityFromPreferences(myPreferences);
         Intent intent = UtilsUltra.createServiceIntentFromActivity(
                 getApplicationContext(), Params.FLAG_BIND_ACTIVITY);
         if (servCon == null)
             settingUpServiceConnection();
         bindService(intent, servCon, Context.BIND_AUTO_CREATE);
 
-        super.onResume();
+
     }
 
     private void settingUpServiceConnection() {
@@ -97,8 +115,8 @@ public class MainUltraActivity extends FragmentActivity implements
                 playerService = ((LocalPlayerBinder) service).getService();
                 isServiceBinded = true;
                 playerService.setCallback(MainUltraActivity.this);
-
-
+                currentStatusObjectOverall = playerService.getStatusObject();
+                mFragmentPlayerCallback.onRebindRestoreStatus(currentStatusObjectOverall);
                 System.out.println("onServiceConnected");
             }
         };
@@ -120,11 +138,16 @@ public class MainUltraActivity extends FragmentActivity implements
 
     @Override
     protected void onStop() {
+
+
         System.out.println("Activity onStop");
+        System.out.println("put quality " + currentQualityKey);
         UtilsUltra.putQualityToSharedPrefs(
-                getSharedPreferences(Params.KEY_PREFERENCES_QUALITY,
+                getSharedPreferences(Params.KEY_PREFERENCES,
                         MODE_PRIVATE), currentQualityKey);
-        super.onStop();
+//        if (currentStatusObjectOverall !=null && (currentStatusObjectOverall.getStatusAsync() == Params.STATUS_BUFFERING|| currentStatusObjectOverall.getStatusAsync() == Params.STATUS_CONNECTING))
+//            stop();
+         super.onStop();
     }
 
     @Override
@@ -140,9 +163,9 @@ public class MainUltraActivity extends FragmentActivity implements
 //
 //	}
 
-    public void sendStartIntent() {
+    public void sendStartIntent(int flag) {
         Intent intent = UtilsUltra.createServiceIntentFromActivity(
-                getApplicationContext(), Params.FLAG_PLAY, currentQualityKey);
+                getApplicationContext(), flag, currentQualityKey);
         startService(intent);
     }
 
@@ -156,18 +179,16 @@ public class MainUltraActivity extends FragmentActivity implements
     // if need addition info use another callback
     @Override
     public void buttonClicked(int action) {
-        sendToService(action);
-    }
-
-    private void sendToService(int action) {
         switch (action) {
             case Params.BUTTON_START_KEY:
-                sendStartIntent();
+                sendStartIntent(Params.FLAG_PLAY);
                 break;
             case Params.BUTTON_STOP_KEY:
                 stop();
                 break;
-
+            case Params.BUTTON_SHOW_LIST_FAV:
+                showFavList();
+                break;
 
             case Params.BUTTON_FAV_ON:
                 sendArtistToDb();
@@ -181,23 +202,32 @@ public class MainUltraActivity extends FragmentActivity implements
                 Log.e("ultraerr", "MainUltraActivity wrong action button id " + action);
                 break;
         }
-
-        // }
     }
+
+    private void showFavList() {
+
+        if (manager!=null) {
+            FragmentTransaction fragmentTransaction = manager.beginTransaction();
+             fragmentTransaction.replace(R.id.fragmentHolder, new FragmentFavList());
+             fragmentTransaction.addToBackStack(null).commit();
+
+        }
+    }
+
 
     private void sendArtistToDb() {
         if (myDb==null)
             myDb = new SQLiteDB(this);
-        if (currentStatusObject!=null && mFragmentCallback!=null) {
-            int resultCode = myDb.actionFavArtist(currentArtist, currentTrack);
+        if (currentStatusObjectOverall !=null && mFragmentPlayerCallback !=null) {
+            int resultCode = myDb.actionFavArtist(currentStatusObjectOverall.getArtist(), currentStatusObjectOverall.getTrack());
             UtilsUltra.printLog("result code on Fav to Db" + resultCode);
             switch (resultCode)
             {
                 case Params.DB_ADD_SUCCESS:
-                    mFragmentCallback.onFavoriteDefine(true);
+                    mFragmentPlayerCallback.onFavoriteDefine(true);
                     break;
                 case Params.DB_ARTIST_DELETED:
-                    mFragmentCallback.onFavoriteDefine(false);
+                    mFragmentPlayerCallback.onFavoriteDefine(false);
                     break;
                 default:
                     UtilsUltra.printLog("error occurred in DB action code =" + resultCode, Params.DEFAULT_LOG_TYPE, Log.ERROR);
@@ -226,90 +256,206 @@ public class MainUltraActivity extends FragmentActivity implements
         //SparseArray<Fragment> spa = myAdapter.getCurrentFragment();
         //Fragment f = spa.get(playerFragmentPosition);
         //FragmentPlayer myFragment = (FragmentPlayer) f;
-        //mFragmentCallback = myFragment;
+        //mFragmentPlayerCallback = myFragment;
         UtilsUltra.printLog("onFragmentInit");
         if (playerService != null && isServiceBinded
-                && statusObjectRebinded != null && mFragmentCallback != null)// looks
+                && mFragmentPlayerCallback != null)// looks
             // like
             // we
             // rebind
-            mFragmentCallback.updateOnRebind(statusObjectRebinded);
+            UtilsUltra.printLog("trying to reset status on init player fragment");
+            mFragmentPlayerCallback.onStatusChanged(currentStatusObjectOverall);
         // updateAllFramentFields();
 
     }
 
     @Override
     public void onFragmentCreatedNoInit() {
-        mFragmentCallback = null;
+        mFragmentPlayerCallback = null;
     }
 
 //	@Override
-//	public void onStatusChanged(int status) {
-//		if (mFragmentCallback != null) {
+//	public void onStatusAsyncChanged(int status) {
+//		if (mFragmentPlayerCallback != null) {
 //			currentStringStatus = UtilsUltra.getStatusDescription(
 //					getResources(), status);
-//			mFragmentCallback.onStatusChanged(currentStringStatus);
+//			mFragmentPlayerCallback.onStatusAsyncChanged(currentStringStatus);
 //		}
 //
 //	}
 
-    @Override
-    public void setQuality(int qualityKey) {
 
+    public void setQuality(int qualityKey) {
         currentQualityKey = qualityKey;
-        /*
-         * switch (qualityKey) { case Params.QUALITY_128: qualityURL =
-		 * Params.ULTRA_URL_HIGH; break; case Params.QUALITY_64: qualityURL =
-		 * Params.ULTRA_URL_LOW; break; default: qualityURL =
-		 * Params.ULTRA_URL_HIGH; break; }
-		 */
+        UtilsUltra.putQualityToSharedPrefs(
+                getSharedPreferences(Params.KEY_PREFERENCES,
+                        MODE_PRIVATE), currentQualityKey);
+
+
+//        if (currentStatusObjectOverall !=null && (currentStatusObjectOverall.getStatusAsync() == Params.STATUS_PLAYING || currentStatusObjectOverall.getStatusAsync() == Params.STATUS_BUFFERING || currentStatusObjectOverall.getStatusAsync() ==Params.STATUS_CONNECTING))
+//        {
+//            //System.out.println ("player status " + currentStatusObjectAsync.getPlayerStatus());
+//            stop();
+//            isWaitingFroStop = true;
+//        }
+//        else
+//            sendStartIntent();
+
 
     }
 
     @Override
-    public void update(StatusObject sObject) {
-        // TODO Auto-generated method stub
-        // mFragmentCallback.onStatusChanged();
-        if (mFragmentCallback != null) {
-            mFragmentCallback.onStatusChanged(sObject);
-            if (sObject.getAsyncStatus() == Params.STATUS_NEW_TITLE) {
-                currentArtist = sObject.getArtist();
-                currentTrack = sObject.getTrack();
-                if (myDb ==null)
-                    myDb = new SQLiteDB(this);
-                mFragmentCallback.onFavoriteDefine(myDb.checkIfAlreadyAdded(currentArtist,currentTrack));
-                //mFragmentCallback.onTitleChanged(currentArtist, currentTrack);
+    public boolean checkIsCurrentTrackFav() {
+        if (myDb ==null)
+            myDb = new SQLiteDB(this);
+        if (currentStatusObjectOverall!=null)
+        return myDb.checkIfAlreadyAdded(currentStatusObjectOverall.getArtist(), currentStatusObjectOverall.getTrack());
+        else
+            return true;
+    }
 
+    @Override
+    public void onQualityChangedPositiveClicked(int qualityFromDialog) {
+        UtilsUltra.printLog("current " + currentQualityKey +"; qualityFromDialog" + qualityFromDialog, "", Log.ERROR);
+        if (currentQualityKey == qualityFromDialog)
+            return; //do nothing, same quality
+        else {
+
+            setQuality(qualityFromDialog);
+            if (currentStatusObjectOverall.getStatusPlayer() == Params.STATUS_PLAYING) {
+                sendStartIntent(Params.FLAG_RESTART);
 
             }
         }
-
-        currentStatusObject = sObject;
     }
 
     @Override
-    public void onRebindStatus(StatusObject statusObjectRebinded) {
-        // TODO Auto-generated method stub
-        this.statusObjectRebinded = statusObjectRebinded;
-        if (playerService != null && isServiceBinded
-                && statusObjectRebinded != null && mFragmentCallback != null)// looks
-            // like
-            // we
-            // rebind
-            mFragmentCallback.updateOnRebind(statusObjectRebinded);
-        UtilsUltra.printLog("onRebindStatus");
+    public StatusObjectOverall getOverallStatus() {
+        return currentStatusObjectOverall;
     }
+
+
+    public boolean isArtEnabled() {
+        return isArtEnabled;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.menu_item_favorites:
+                   showFavList();
+                break;
+            case R.id.menu_item_stream_select:
+                showDialogStreamSelect();
+                break;
+            case R.id.menu_load_art:
+                item.setChecked(!isArtEnabled);
+                UtilsUltra.printLog("setArtLoad " +item.isChecked() );
+                boolean isLoadImageEnabled = item.isChecked();
+                setLoadImages(isLoadImageEnabled);
+                return false;
+                    
+            default:
+
+                break;
+
+        }
+        return true;
+    }
+
+    private void setLoadImages(boolean isLoadImageEnabled) {
+        isArtEnabled = isLoadImageEnabled;
+        UtilsUltra.putImageLoadToSharedPrefs(getSharedPreferences(Params.KEY_PREFERENCES,0), isLoadImageEnabled);
+    }
+
+    private void showDialogStreamSelect() {
+        if (manager!=null) {
+            DialogStreamsFragment streamsDialog = new DialogStreamsFragment();
+            streamsDialog.show(manager, "streamsDialog");
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_ultra, menu);
+       MenuItem checkableMenuItem  = menu.findItem(R.id.menu_load_art);
+        checkableMenuItem.setChecked(isArtEnabled);
+
+        return true;
+    }
+//
+//    @Override
+//    public void onRebindStatus(StatusObjectOverall statusObjectOverallRebinded) {
+//        // TODO Auto-generated method stub
+//        this.statusObjectOverallRebinded = statusObjectOverallRebinded;
+//        if (playerService != null && isServiceBinded
+//                && statusObjectOverallRebinded != null && mFragmentPlayerCallback != null)// looks
+//            // like
+//            // we
+//            // rebind
+//            mFragmentPlayerCallback.updateOnRebind(playerService.getStatusObject());
+//        UtilsUltra.printLog("onRebindStatus");
+//    }
 
     public void setCallback(FragmentPlayer fragmentPlayer) {
         // TODO Auto-generated method stub
-        mFragmentCallback = fragmentPlayer;
+        mFragmentPlayerCallback = fragmentPlayer;
     }
 
     @Override
     public void onImageBuffered() {
         // TODO Auto-generated method stub
-        if (mFragmentCallback != null)
-            mFragmentCallback.onImageBuffered();
+        if (mFragmentPlayerCallback != null)
+            mFragmentPlayerCallback.onImageBuffered();
     }
 
+    @Override
+    public void onStreamStop() {
+//        if (isWaitingFroStop ==true) {
+//            isWaitingFroStop = false;
+//            sendStartIntent();
+//        }
+    }
+
+    @Override
+    public void onUpdateStatus(StatusObjectOverall statusObjectOverall) {
+
+        if (mFragmentPlayerCallback != null && statusObjectOverall!=null) {
+            mFragmentPlayerCallback.onStatusChanged(statusObjectOverall);
+            if (statusObjectOverall.getStatusAsync() == Params.STATUS_NEW_TITLE) {
+                if (myDb ==null)
+                    myDb = new SQLiteDB(this);
+                mFragmentPlayerCallback.onFavoriteDefine(myDb.checkIfAlreadyAdded(currentStatusObjectOverall.getArtist(), currentStatusObjectOverall.getTrack()));
+            }
+        }
+
+        currentStatusObjectOverall = statusObjectOverall;
+    }
+
+    @Override
+    public void onBackStackChanged() {
+    }
+
+    @Override
+    public void deleteItemClicked(int itemId) {
+        if (myDb!=null) {
+            System.out.println("onDeleteFromClick " + myDb.removeArtistFromDB(itemId));
+            if (fragmentFavCallBack!=null)
+                fragmentFavCallBack.artistDeleted(myDb.getAllFields());
+        }
+    }
+
+    @Override
+    public void setCallBackFav(ActivityToFragmentFavListener fragmentFavCallBack) {
+        if (fragmentFavCallBack!=null) {
+            this.fragmentFavCallBack = fragmentFavCallBack;
+            if (myDb==null) {
+                myDb = new SQLiteDB(this);
+            }
+                fragmentFavCallBack.setFavAdapter(this, myDb.getAllFields());
+        }
+
+    }
 }

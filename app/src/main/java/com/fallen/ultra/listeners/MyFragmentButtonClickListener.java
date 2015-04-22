@@ -1,5 +1,6 @@
 package com.fallen.ultra.listeners;
 
+import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,11 +11,11 @@ import com.fallen.ultra.callbacks.UniversalFragmentButtonListener;
 import com.fallen.ultra.utils.Params;
 
 
-public class MyFragmentButtonClickListener implements OnClickListener, android.widget.CompoundButton.OnCheckedChangeListener {
+public class MyFragmentButtonClickListener implements OnClickListener {
 
     private UniversalFragmentButtonListener onButtonClickListener;
 
-    public MyFragmentButtonClickListener(UniversalFragmentButtonListener onButtonClickListener, FragmentActivity fragmentActivity) {
+    public MyFragmentButtonClickListener(UniversalFragmentButtonListener onButtonClickListener, Activity fragmentActivity) {
         this.onButtonClickListener = onButtonClickListener;
     }
 
@@ -35,22 +36,16 @@ public class MyFragmentButtonClickListener implements OnClickListener, android.w
             case R.id.favoritesButtonOn:
                 action = Params.BUTTON_FAV_ON;
                 break;
+            case R.id.listFavButton:
+                action = Params.BUTTON_SHOW_LIST_FAV;
+                break;
             default:
                 break;
         }
         onButtonClickListener.onButtonClicked(action);
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        // TODO Auto-generated method stub
-        if (isChecked) {
-            if (buttonView.getId() == R.id.chooser64)
-                onButtonClickListener.onQualityChange(Params.QUALITY_64);
-            else if (buttonView.getId() == R.id.chooser128)
-                onButtonClickListener.onQualityChange(Params.QUALITY_128);
-        }
-    }
+
 
 
 }

@@ -1,10 +1,10 @@
 package com.fallen.ultra.callbacks;
 
-import com.fallen.ultra.creators.StatusObject;
+import com.fallen.ultra.com.fallen.ultra.model.StatusObjectOverall;
 
 public interface AsyncLoadStreamCallback {
 
-	void onStatusChange(StatusObject status);
+	void onStatusChange(StatusObjectOverall status);
 	void onBuffered();
 	void onSocketStart();
 	void onNewStreamTitleRetrieved(String artist, String track);

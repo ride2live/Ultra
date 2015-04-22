@@ -2,7 +2,6 @@ package com.fallen.ultra.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLConnection;
 
 import android.app.NotificationManager;
 import android.content.ContentValues;
@@ -137,7 +136,7 @@ public abstract class UtilsUltra {
 		if (qualityFromPrefs == -1) {
 			Editor myEditor = myPreferences.edit();
 			myEditor.putInt(Params.KEY_PREFERENCES_QUALITY_FIELD,
-					Params.QUALITY_128);
+					Params.QUALITY_192);
 			myEditor.commit();
 		}
 		UtilsUltra.printLog("quality on create = " + qualityFromPrefs,
@@ -171,12 +170,16 @@ public abstract class UtilsUltra {
 			int action, int qualityKey) {
 		Intent intent = new Intent(context, UltraPlayerService.class);
 		String qualityUrl = null;
-		if (action == Params.FLAG_PLAY) {
+		if (action == Params.FLAG_PLAY || action == Params.FLAG_RESTART) {
 			intent.putExtra(Params.ACTION_FROM_CONTROLS, action);
 			if (qualityKey == Params.QUALITY_128)
-				qualityUrl = Params.ULTRA_URL_HIGH;
-			else
-				qualityUrl = Params.ULTRA_URL_LOW;
+				qualityUrl = Params.ULTRA_URL_128;
+			else if (qualityKey == Params.QUALITY_64)
+				qualityUrl = Params.ULTRA_URL_64;
+            else if (qualityKey == Params.QUALITY_192)
+                qualityUrl = Params.ULTRA_URL_192;
+            else
+                qualityUrl = Params.ULTRA_URL_192;
 		}
 		intent.putExtra(Params.KEY_PREFERENCES_QUALITY_FIELD, qualityUrl);
 		return intent;
@@ -211,8 +214,12 @@ public abstract class UtilsUltra {
 		case Params.STATUS_ERROR:
 			description = res.getString(R.string.error);
 			break;
+            case Params.STATUS_STOPPING_IN_PROCESS:
+                description = res.getString(R.string.stopping);
+                break;
 
-		default:
+
+            default:
 			description = Params.STATUS_DESCRIPTION_NOTHING_AT_ALL;
 			break;
 		}
@@ -231,4 +238,21 @@ public abstract class UtilsUltra {
 		String urlGetTrackInfo = Params.LASTFM_ARTIST_GET_INFO+"&api_key="+Params.LASTFM_DEV_KEY+"&artist="+artist;
 		return urlGetTrackInfo;
 	}
+
+    public static void putImageLoadToSharedPrefs(SharedPreferences myPreferences,
+                                                 boolean isEnabled) {
+        myPreferences
+                .edit()
+                .putBoolean(Params.KEY_PREFERENCES_ART_ENABLED_FIELD, isEnabled)
+                .commit();
+
+
+    }
+    public static boolean getIsArtEnabledFromPreferences(SharedPreferences myPreferences) {
+
+        boolean isEnabled = myPreferences.getBoolean(
+                Params.KEY_PREFERENCES_ART_ENABLED_FIELD, true);
+        return isEnabled;
+
+    }
 }

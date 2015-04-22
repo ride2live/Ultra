@@ -4,12 +4,15 @@ package com.fallen.ultra.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.ParamsDB;
 import com.fallen.ultra.utils.UtilsUltra;
+
+import java.io.UnsupportedEncodingException;
 
 public class SQLiteDB extends SQLiteOpenHelper {
 
@@ -35,12 +38,12 @@ public class SQLiteDB extends SQLiteOpenHelper {
     }
 
     public int actionFavArtist(String name, String track) {
-        name = prepeareForSQL(name);
-        track = prepeareForSQL(track);
+        //name = prepeareForSQL(name);
+        //track = prepeareForSQL(track);
         int result_type;
         UtilsUltra.printLog("actionFav "+name +" " + track);
         if (db == null) return Params.DB_IS_NULL;
-        getAllFields();
+        //getAllFields();
 
         if (checkIfAlreadyAdded(name, track))
             if (removeArtistFromDB(name, track)) result_type = Params.DB_ARTIST_DELETED;
@@ -59,49 +62,74 @@ public class SQLiteDB extends SQLiteOpenHelper {
     }
 
     private String prepeareForSQL(String unprepearedText) {
-        String prepearedText = unprepearedText.replace("'", "");
+        String prepearedText = "'" + Params.NO_TITLE + "'";
+        if (unprepearedText ==null)
+            unprepearedText = "";
+        if (!unprepearedText.startsWith("'")) {
+            prepearedText = DatabaseUtils.sqlEscapeString(unprepearedText);
+            System.out.println("just now prepeared " + prepearedText);
+        }
+        else
+        {
+            System.out.println("Already Prepeared " + prepearedText);
+        }
+      //  if (prepearedText.length()>2) {
+//            String unwanted = prepearedText.substring(0, 1);
+//            char [] unwantedArray = unwanted.toCharArray();
+//
+//            System.out.println("unwanted character " + (int)unwantedArray [0]);
+            //prepearedText = prepearedText.substring(1, prepearedText.length()-1);
+       // }
+
         return prepearedText;
     }
 
     private boolean removeArtistFromDB(String name, String track) {
+        name = prepeareForSQL(name);
+        track = prepeareForSQL(track);
         UtilsUltra.printLog("removeArtistFromDB");
-        long deleteCountCheck = db.delete(ParamsDB.DB_TABLE_NAME, ParamsDB.DB_ARTIST_COLUMN + " LIKE '" + name + "' AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE '" + track +"'", null);
-
+        //long deleteCountCheck = db.delete(ParamsDB.DB_TABLE_NAME, ParamsDB.DB_ARTIST_COLUMN + " LIKE '" + name + "' AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE '" + track +"'", null);
+        long deleteCountCheck = db.delete(ParamsDB.DB_TABLE_NAME, ParamsDB.DB_ARTIST_COLUMN + " LIKE " + name + " AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE " + track +"", null);
         if (deleteCountCheck != -1) return true;
         else return false;
 
 
     }
+    public boolean removeArtistFromDB(int id) {
+        long deleteCountCheck = db.delete(ParamsDB.DB_TABLE_NAME, ParamsDB.DB_ID_COLUMN + " = " + id, null);
+        if (deleteCountCheck != -1) return true;
+        else return false;
+    }
 
     public boolean checkIfAlreadyAdded(String name, String track) {
         name = prepeareForSQL(name);
         track = prepeareForSQL(track);
-        UtilsUltra.printLog(ParamsDB.DB_ARTIST_COLUMN + " LIKE '" + name + "' AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE '" + track+"'");
-        Cursor c = db.query(ParamsDB.DB_TABLE_NAME,null, ParamsDB.DB_ARTIST_COLUMN + " LIKE '%" + name + "%' AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE '%" + track+"%'",null, null ,null, null);
-
-        //Cursor c = db.query(ParamsDB.DB_TABLE_NAME,null, ParamsDB.DB_ARTIST_COLUMN + " LIKE '" + String.valueOf(name)+"' AND",null, null ,null, null, null);
+        UtilsUltra.printLog(ParamsDB.DB_ARTIST_COLUMN + " LIKE " + name + " AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE " + track);
+        //Cursor c = db.query(ParamsDB.DB_TABLE_NAME,null, ParamsDB.DB_ARTIST_COLUMN + " LIKE '" + name + "' AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE '" + track+"'",null, null ,null, null);
+        Cursor c = db.query(ParamsDB.DB_TABLE_NAME,null, ParamsDB.DB_ARTIST_COLUMN + " LIKE " + name + " AND " + ParamsDB.DB_TRACK_COLUMN + " LIKE " + track,null, null ,null, null);
         c.moveToFirst();
-        while (c.moveToNext())
-        {
-            UtilsUltra.printLog(String.valueOf(c.getString(c.getColumnIndex(ParamsDB.DB_ARTIST_COLUMN))) + " track " + String.valueOf(c.getString(c.getColumnIndex(ParamsDB.DB_TRACK_COLUMN))));
-        }
-        if (c.getCount()>0)
+//        while (c.moveToNext())
+//        {
+//            UtilsUltra.printLog(String.valueOf(c.getString(c.getColumnIndex(ParamsDB.DB_ARTIST_COLUMN))) + " track " + String.valueOf(c.getString(c.getColumnIndex(ParamsDB.DB_TRACK_COLUMN))));
+//        }
+        if (c.getCount()>0) {
+            UtilsUltra.printLog("true, go to delete");
+
             return true;
-        else
+        }
+        else {
+            UtilsUltra.printLog("false, go to add");
             return false;
+        }
 
     }
 
     public Cursor getAllFields ()
     {
-        String name;
+
         Cursor c = db.query(ParamsDB.DB_TABLE_NAME, null, null, null ,null, null, null);
         c.moveToFirst();
-//        while (c.moveToNext())
-//        {
-//            //System.out.println("c count " + c.getCount());
-//            //UtilsUltra.printLog(String.valueOf(c.getString(c.getColumnIndex(ParamsDB.DB_ARTIST_COLUMN))));
-//        }
+
         return c;
     }
 

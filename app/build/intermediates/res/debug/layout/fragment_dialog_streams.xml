@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RadioGroup
+        android:id="@+id/radioGroupStreams"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+        <!--android:checked="true" for first radiobutton bug-->O-
+        <RadioButton
+            android:tag="192"
+
+            android:id="@+id/chooser192"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="192" />
+        <RadioButton
+            android:tag="128"
+            android:id="@+id/chooser128"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="128" />
+
+        <RadioButton
+            android:tag="64"
+            android:id="@+id/chooser64"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="64" />
+    </RadioGroup>
+
+</LinearLayout><!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio/app/src/main/res/layout/fragment_dialog_streams.xml -->

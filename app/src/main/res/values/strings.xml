@@ -10,5 +10,6 @@
     <string name="volume">громкость</string>
     <string name="connecting">соединение</string>
     <string name="unavailable">нет соединения</string>
+    <string name="stopping">отключение</string>
 
 </resources>

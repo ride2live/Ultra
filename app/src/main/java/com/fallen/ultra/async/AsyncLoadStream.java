@@ -1,5 +1,7 @@
 package com.fallen.ultra.async;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,48 +10,61 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 
 import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.fallen.ultra.callbacks.Observer;
-import com.fallen.ultra.callbacks.Observerable;
-import com.fallen.ultra.creators.StatusObject;
+import com.fallen.ultra.callbacks.AsyncToServiceCallback;
+import com.fallen.ultra.com.fallen.ultra.model.TempAsyncStatus;
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
 
-public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> implements Observerable {
+public class AsyncLoadStream extends AsyncTask<String, TempAsyncStatus, Void>  {
 
-	boolean isBuffered = false;
-	ArrayList<Observer> observers;
+    AsyncToServiceCallback asyncToServiceCallback;
+	boolean isBuffered;
+    Socket client;
+    HttpURLConnection uc;
 	OutputStream emulatingStream;
+    boolean isCanceledManualy;
 
-	public AsyncLoadStream() {
-		observers = new ArrayList<>();
-	
+	public AsyncLoadStream(AsyncToServiceCallback asyncToServiceCallback) {
+    this.asyncToServiceCallback = asyncToServiceCallback;
+        File folder = new File(Params.SAVE);
+        if (!folder.exists())
+            folder.mkdirs();
+        else
+            //something wrong, disable rec
+        isCanceledManualy = false;
 	}
 
 	@Override
 	protected Void doInBackground(String... params) {
-		URL url;
-
+//        String stringUrl = params[0];
+//
+//        System.out.println (stringUrl);
+       // params[0] = Params.ULTRA_URL_128;
+        URL url;
+        isBuffered = false;
 		int metaInt;
 		int bytePreIntSum = 0;
 		int bufferedSum = 0;
 		int bufferBeforePlayback = Params.BUFFER_FOR_PLAYER_IN_BYTES;
-
+        TempAsyncStatus tempAsyncStatus = new TempAsyncStatus();
 		ServerSocket serverSocket = null;
-		Socket client;
-		// File fileToWrite = UtilsUltra.getTestFileToWrite();
+
+		File fileToWrite;
+        FileOutputStream fileOutputStream = null;
 		OutputStream out = null;
 		InputStream radioStream = null;
 		try {
+
 			url = new URL(params[0]);
-			HttpURLConnection uc = getUrlConnection(url);
-			
+            tempAsyncStatus = new TempAsyncStatus();
+            tempAsyncStatus.setStatus(Params.STATUS_CONNECTING);
+            publishProgress(tempAsyncStatus);
+            uc = getUrlConnection(url);
 			uc.setUseCaches(true);
 			uc.setConnectTimeout(Params.CONNECTION_TIMEOUT);
 			//uc.connect();
@@ -58,19 +73,18 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			if (bufferBeforePlayback < metaInt + Params.MAX_METAINT_VALUE)
 				bufferBeforePlayback = metaInt + Params.MAX_METAINT_VALUE;
 			UtilsUltra.printLog("bufferBeforePlayback " + bufferBeforePlayback, null, 0);
-			
 			radioStream = uc.getInputStream();
 			byte[] buffer = new byte[Params.DEFAULT_INPUTSTREAM_BUFFER_BYTES];
 			int bytesRealyRead;
 			int byteToRead = 1024;
-
-			
-			try {
+            try {
 				serverSocket = new ServerSocket(
 						Integer.parseInt(Params.SOCKET_PORT));
 				UtilsUltra.printLog("socket created");
-				publishProgress(new StatusObject(Params.STATUS_SOCKET_CREATING, true));
-				UtilsUltra.printLog("update status, and waiting for mediaplayer connect");
+                tempAsyncStatus = new TempAsyncStatus();
+                tempAsyncStatus.setStatus(Params.STATUS_SOCKET_CREATING);
+				publishProgress(tempAsyncStatus);
+				UtilsUltra.printLog("updateAsyncStatusObject status, and waiting for mediaplayer connect");
 				client = serverSocket.accept();
 				emulatingStream = client.getOutputStream();
 				emulatingStream = configureOutputstream(emulatingStream);
@@ -81,58 +95,73 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 
 				e.printStackTrace();
 			}
+            tempAsyncStatus = new TempAsyncStatus();
+            tempAsyncStatus.setStatus(Params.STATUS_BUFFERING);
+            publishProgress(tempAsyncStatus);
 			while ((bytesRealyRead = radioStream.read(buffer, 0, byteToRead)) != -1
-					&& !isCancelled()) {
-				if (metaInt != Params.NO_METAINT)
+            ) {
+                if (isCanceledManualy || isCancelled()) {
+                    UtilsUltra.printLog("cleaning sockets");
+                    if (serverSocket != null)
+                        serverSocket.close();
+                    if (client!=null)
+                        client.close();
+                    if (emulatingStream!=null) {
+                        emulatingStream.flush();
+                        emulatingStream.close();
+                        emulatingStream = null;
+                    }
+                    break;
+                }
+                if (metaInt != Params.NO_METAINT)
 					bytePreIntSum += bytesRealyRead;
-
 				if (!isBuffered) {
 					bufferedSum += bytesRealyRead;
-
 					if (bufferedSum > bufferBeforePlayback)
 					{
 						isBuffered = true;
-						publishProgress(new StatusObject(Params.STATUS_BUFFERING,true));
-						publishProgress(new StatusObject(Params.STATUS_NONE, true));
+                        tempAsyncStatus = new TempAsyncStatus();
+                        tempAsyncStatus.setStatus(Params.STATUS_NONE);
+                        System.out.println("send NONE status");
+                        publishProgress(tempAsyncStatus);
 					}
-
 				}
-
 				if (bytePreIntSum == metaInt && metaInt != Params.NO_METAINT) {
-
 					int metadataLenght = radioStream.read();
-
 					if (metadataLenght > 0) {
 						int byteSumMetadata = metadataLenght * 16;
 						int realyReadMetaData;
 						byte[] metaDataBuffer = new byte[metadataLenght * 16];
 						//String str = new String(metaDataBuffer, "UTF-8");
 						StringBuilder str = new StringBuilder();
-						
 						int realyReadMetaDataSum = 0;
-						while (realyReadMetaDataSum  < byteSumMetadata) {
+						while (realyReadMetaDataSum  < byteSumMetadata && !isCanceledManualy) {
 							realyReadMetaData = radioStream.read(metaDataBuffer, 0, metaDataBuffer.length);
 							realyReadMetaDataSum = realyReadMetaDataSum + realyReadMetaData;
 							String tempString  = new String(metaDataBuffer, "UTF-8");
 							if (realyReadMetaDataSum < byteSumMetadata )
 								metaDataBuffer = new byte [byteSumMetadata - realyReadMetaDataSum];
 							str.append(tempString);
-							
 						}
-					
-						
 						ContentValues metadataParsed = UtilsUltra.createBundleWithMetadata(str.toString());
 						String artist = metadataParsed.getAsString(Params.TRACK_ARTIST_KEY);
 						String track = metadataParsed.getAsString(Params.TRACK_SONG_KEY);
-						publishProgress(new StatusObject(Params.STATUS_NEW_TITLE, artist, track));
-						System.out.println(str);
-						
-
+                        tempAsyncStatus = new TempAsyncStatus();
+                        tempAsyncStatus.setStatus(Params.STATUS_NEW_TITLE, artist, track);
+                        System.out.println("send new title status");
+						publishProgress(tempAsyncStatus);
+                        //fileToWrite = new File(createOutputFileByTitle(artist,track));
+                        //fileOutputStream = new FileOutputStream(fileToWrite);
 					}
 					bytePreIntSum = 0;
 					byteToRead = Params.DEFAULT_INPUTSTREAM_BUFFER_BYTES;
 				}
-				emulatingStream.write(buffer, 0, bytesRealyRead);
+                if (emulatingStream!=null)
+				    emulatingStream.write(buffer, 0, bytesRealyRead);
+//                if (fileOutputStream!=null)
+//                    fileOutputStream.write(buffer, 0, bytesRealyRead);
+
+
 				if (bytePreIntSum + Params.DEFAULT_INPUTSTREAM_BUFFER_BYTES > metaInt  && metaInt != Params.NO_METAINT) {
 					byteToRead = metaInt - bytePreIntSum;
 					
@@ -147,8 +176,10 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			e.printStackTrace();
 		}
 		UtilsUltra.printLog("Server rerturn -1, closing socket", null, Log.ERROR);
-		publishProgress(new StatusObject(Params.STATUS_STREAM_ENDS, true));
+        tempAsyncStatus.setStatus(Params.STATUS_STREAM_ENDS);
+		publishProgress(tempAsyncStatus);
 		try {
+
 			if (out != null)
 				out.close();
 			if (serverSocket != null)
@@ -163,12 +194,48 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 		return null;
 	}
 
-	private HttpURLConnection getUrlConnection(URL url) {
+    private void clearStreams() {
+        if (emulatingStream!=null)
+            try {
+                emulatingStream.close();
+                emulatingStream = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        if (uc !=null)
+            uc.disconnect();
+    }
+
+    private String createOutputFileByTitle(String artist, String title) {
+        // TODO Auto-generated method stub
+        String fileName = artist + " " + title;
+
+
+
+        File checkFileExists = new File (Params.SAVE + fileName+".mp3");
+        int fileIndex =0;
+        while (checkFileExists.exists())
+        {
+
+            fileIndex++;
+            checkFileExists = new File (Params.SAVE + fileName+"("+String.valueOf(fileIndex)+").mp3");
+        }
+        String fileToPlay = Params.SAVE + checkFileExists.getName();
+        //System.out.println ("constructed name = " + fileToPlay);
+        return fileToPlay;
+    }
+    @Override
+    protected void onCancelled(Void aVoid) {
+        isCanceledManualy = true;
+        System.out.println ("on canceled");
+    }
+
+
+
+    private HttpURLConnection getUrlConnection(URL url) {
 		HttpURLConnection urlConnection = null;
 		try {
 			UtilsUltra.printLog("opening connection " + url, null, 0);
-			publishProgress(new StatusObject(Params.STATUS_CONNECTING, true));
-			
 			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.addRequestProperty("Icy-MetaData", "1");
 			urlConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6");
@@ -180,8 +247,6 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 		UtilsUltra.printLog("opening connection done " + url, null, 0);
 		return urlConnection;
 	}
-
-	
 
 	private OutputStream configureOutputstream(OutputStream emulatingStream) {
 		String responseCode = ("HTTP/1.1 200 OK\r\n");
@@ -197,9 +262,15 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 	}
 
 	@Override
-	protected void onProgressUpdate(StatusObject... values) {
-		notifyObservers(values[0]);
-		/*switch (values[0].getStatus()) {
+	protected void onProgressUpdate(TempAsyncStatus... values) {
+        super.onProgressUpdate(values);
+        if (values[0] !=null && asyncToServiceCallback!=null) {
+            System.out.println ("Status on update = " + values [0].getStatus());
+            asyncToServiceCallback.onStatusChanged(values[0]);
+        }
+
+
+		/*switch (values[0].getStatusAsync()) {
 		case Params.ACTION_BUFFERED:
 			streamCallback.onBuffered();
 			break;
@@ -219,12 +290,12 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 			streamCallback.onNewStreamTitleRetrieved(values[0].getArtist(), values[0].getTrack());
 			break;
 		case Params.ACTION_CONNECTING:
-			streamCallback.onConnecting(values[0].getStatus());
+			streamCallback.onConnecting(values[0].getStatusAsync());
 			break;
 		default:
 			break;
 		}*/
-		super.onProgressUpdate(values);
+
 		
 
 	}
@@ -232,26 +303,12 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
 	@Override
 	protected void onPostExecute(Void result) {
 		super.onPostExecute(result);
+
+
 	}
 
-	@Override
-	public void registerObserver(Observer o) {
-		observers.add(o);
-	}
 
-	@Override
-	public void removeObserver(Observer o) {
-		observers.remove(o);
-	}
 
-	@Override
-	public void notifyObservers(StatusObject sObject) {
-		for (Observer observer : observers) {
-			if (observer!=null)
-				observer.update(sObject);
-		}
-		
-	}
     public  int getMetInt(HttpURLConnection uc) {
         // TODO Auto-generated method stub
         int metaInt = 0;
@@ -268,4 +325,6 @@ public class AsyncLoadStream extends AsyncTask<String, StatusObject, Void> imple
         }
         return metaInt;
     }
+
+
 }

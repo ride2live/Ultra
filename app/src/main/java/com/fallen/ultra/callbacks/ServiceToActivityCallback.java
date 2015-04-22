@@ -1,12 +1,15 @@
 package com.fallen.ultra.callbacks;
 
-import com.fallen.ultra.creators.StatusObject;
+import com.fallen.ultra.com.fallen.ultra.model.StatusObjectOverall;
 
 public interface ServiceToActivityCallback {
 
 	void onUnbindService ();
 
-	void onRebindStatus(StatusObject statusObjectRebinded);
 
 	void onImageBuffered();
+
+    void onStreamStop();
+
+    void onUpdateStatus(StatusObjectOverall statusObjectOverall);
 }

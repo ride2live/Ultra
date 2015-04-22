@@ -180,17 +180,17 @@ public class AsyncImageLoader extends AsyncTask<String, Void, File> {
 				if (lastFmParser.getEventType() == XmlPullParser.START_TAG
 						&& lastFmParser.getName().equals(imageTag)) {
 
-					UtilsUltra.printLog(lastFmParser.getName() + " getName");
+					//UtilsUltra.printLog(lastFmParser.getName() + " getName");
 					if (lastFmParser.getAttributeCount() > 0) {
-						UtilsUltra.printLog(lastFmParser.getAttributeName(0)
-								+ " " + lastFmParser.getAttributeValue(0)
-								+ " getAttr");
+						//UtilsUltra.printLog(lastFmParser.getAttributeName(0)
+//								+ " " + lastFmParser.getAttributeValue(0)
+//								+ " getAttr");
 						attr = lastFmParser.getAttributeValue(0);
 						lastFmParser.next();
 						if (lastFmParser.getEventType() == XmlPullParser.TEXT
 								&& attr.equals("extralarge")) {
-							UtilsUltra.printLog(lastFmParser.getText()
-									+ " getText");
+//							UtilsUltra.printLog(lastFmParser.getText()
+//									+ " getText");
 							resultArtUrl = lastFmParser.getText();
 							isImageFound = true;
 						}

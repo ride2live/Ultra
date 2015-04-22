@@ -1,12 +1,13 @@
 package com.fallen.ultra.utils;
 
-public class Params {
+import android.os.Environment;
 
-	
+public class Params {
 	public static final int NOTIFICATION_ID = 90123;
 	public static final int FLAG_PLAY = 100;
 	public static final int FLAG_STOP = 101;
 	public static final int FLAG_BIND_ACTIVITY = 102;
+    public static final int FLAG_RESTART = 103;
 	//public static final String ACTION_FROM_CONTROLS = "";
 	public static final String ACTION_FROM_CONTROLS = "ACTION_FROM_CONTRLOS";
 	public static final String ACTION_FROM_BROADCAST_PHONE = "ACTION_FROM_BROADCAST_PHONE";
@@ -16,10 +17,10 @@ public class Params {
 	public static final int BUTTON_STOP_KEY = 201;
     public static final int BUTTON_FAV_OFF = 202;
     public static final int BUTTON_FAV_ON = 203;
+    public static final int BUTTON_SHOW_LIST_FAV = 204;
 	public static final String ICY_KEY = "icy-metaint";
 	public static final String SOCKET_PORT = "8889";
 	public static final String LOCAL_SOCKET_STREAM_IP = "http://127.0.0.1:" + SOCKET_PORT;
-	
 	//rewrite to int an rename with including async  word
 	public static final int ACTION_SOCKET_PREACCEPT_DELAY = 300;
 	public static final int ACTION_BUFFERED = 301;
@@ -36,18 +37,21 @@ public class Params {
 	public static final CharSequence STREAM_TITLE_KEYWORD = "StreamTitle";
 	public static final String TRACK_ARTIST_KEY = "artist_key";
 	public static final String TRACK_SONG_KEY = "song_key";
-	public static final String ULTRA_URL_HIGH = "http://mp3.nashe.ru/ultra-128.mp3";
-	public static final String ULTRA_URL_LOW = "http://mp3.nashe.ru/ultra-64.mp3";
+	public static final String ULTRA_URL_128 = "http://mp3.nashe.ru/ultra-128.mp3";
+	public static final String ULTRA_URL_192 = "http://mp3.nashe.ru/ultra-192.mp3";
+    public static final String ULTRA_URL_64 = "http://mp3.nashe.ru/ultra-64.mp3";
 	public static final String NO_TITLE = "No Title";
 	public static final Object EMPTY_ARTIST_STRING = "";
 	public static final int ACTION_WRONG = -1;
-		public static final int MAX_METAINT_VALUE = 4080;
+	public static final int MAX_METAINT_VALUE = 4080;
 
-	public static final String KEY_PREFERENCES_QUALITY = "quality";
+	public static final String KEY_PREFERENCES = "quality";
 	public static final String KEY_PREFERENCES_QUALITY_FIELD = "quality_field";
+    public static final String KEY_PREFERENCES_ART_ENABLED_FIELD = "art_field";
 	public static final int QUALITY_64 = 64;
 	public static final int QUALITY_128 = 128;
-	public static final int QUALITY_DEFAULT_KEY = 128;
+    public static final int QUALITY_192 = 192;
+	public static final int QUALITY_DEFAULT_KEY = 192;
 	
 	
 	public static final int STATUS_CONNECTING = 500;
@@ -56,13 +60,16 @@ public class Params {
 	public static final int STATUS_STOPED = 503;
 	public static final int STATUS_ERROR = 504;
 	public static final int STATUS_SOCKET_CREATING = 505;
+    public static final int STATUS_NEW_TITLE = 506;
+    public static final int STATUS_STOPPING_IN_PROCESS = 507;
 	public static final String STATUS_DESCRIPTION_NOTHING_AT_ALL = "";
-	public static final int STATUS_NEW_TITLE = 506;
+
 	public static final boolean USE_CHECKER = false;
 	public static final int STATUS_NONE = -1;
 	public static final int STATUS_STREAM_ENDS = 507;
-	public static final int CONNECTION_TIMEOUT = 5000;
+	public static final int CONNECTION_TIMEOUT = 10000;
 	public static final String TEMP_FILE_NAME = "tempArt";
+    public static final String SAVE = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Ultra/save/";
 
 
 
@@ -80,10 +87,5 @@ public class Params {
     public static final int DB_IS_NULL = 604;
     public static final int DB_ARTIST_DELETED = 605;
     public static final int DB_ERROR_ON_DELETE = 606;
-	
-	
-	
-	
-	
 
 	}
