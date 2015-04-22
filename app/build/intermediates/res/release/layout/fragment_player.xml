@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_player_linear"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#303030"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -11,7 +12,7 @@
         android:layout_marginBottom="1dp"
         android:layout_marginTop="1dp"
         android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -21,12 +22,15 @@
             android:background="#202020"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="10dp" >
+            android:padding="10dp">
+
 
             <TextView
                 android:id="@+id/artistTextFragment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:maxLines="2"
                 android:shadowColor="@android:color/holo_blue_dark"
@@ -37,6 +41,7 @@
                 android:textColor="@android:color/holo_blue_light"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
 
             <TextView
                 android:id="@+id/trackTextFragment"
@@ -52,31 +57,59 @@
                 android:textColor="@android:color/holo_blue_light"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
+            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical" >
+            android:layout_weight="1">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:clickable="true"
+                    android:id="@+id/favoritesButtonOff"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:visibility="visible"
+                    android:src="@android:drawable/star_big_off" />
+
+                <ImageView
+                    android:clickable="true"
+                    android:id="@+id/favoritesButtonOn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@android:drawable/star_big_on"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <ImageView
-                android:id="@+id/imageViewArt"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_horizontal"
+
                 android:layout_margin="10dp"
+                android:id="@+id/imageViewArt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
                 android:background="#00000000"
-                android:padding="10dp"
-                android:scaleType="fitCenter" >
-            </ImageView>
-        </LinearLayout>
+                android:scaleType="fitCenter"
+                android:src="@drawable/ultra_400400"/>
+
+
+
+
+
+
+        </RelativeLayout>
+
         <TextView
 
 
@@ -84,7 +117,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_vertical"
-            android:text="TextView"
             android:padding="10dp"
             android:textColor="@android:color/holo_blue_dark"
             android:textSize="20sp" />
@@ -93,19 +125,19 @@
             android:layout_width="fill_parent"
             android:layout_height="3dp"
             android:background="@android:color/holo_blue_light" />
+
         <LinearLayout
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
-            android:padding="10dp"
-           >
+            android:orientation="horizontal"
+            android:padding="10dp">
+
             <RelativeLayout
-                android:padding="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-            >
+                android:padding="10dp">
 
                 <!-- REWRITE THIS TO FRAGMENT! -->
 
@@ -114,9 +146,9 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:background="@drawable/button_background_play"
+
                     android:textOff=""
-                    android:textOn=""
-                    android:checked="false" />
+                    android:textOn="" />
 
                 <ToggleButton
                     android:id="@+id/sstopInFragment"
@@ -136,33 +168,52 @@
                     android:background="@drawable/exp_play"
                     android:padding="10dp"
                     android:visibility="gone" />
+
             </RelativeLayout>
 
+            <!--<Button-->
+                <!--android:id="@+id/buttonstatus"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="sdfdfzd"/>-->
 
 
-            <RadioGroup
+            <!--<RadioGroup-->
+                <!--android:id="@+id/radioGroup1"-->
+                <!--android:layout_width="wrap_content"-->
+
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:orientation="vertical">-->
+
+                <!--<RadioButton-->
+                    <!--android:id="@+id/chooser192"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:checked="true"-->
+                    <!--android:text="192" />-->
+                <!--<RadioButton-->
+                    <!--android:id="@+id/chooser128"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:checked="true"-->
+                    <!--android:text="128" />-->
+
+                <!--<RadioButton-->
+                    <!--android:id="@+id/chooser64"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="20dp"-->
+                    <!--android:text="64" />-->
+            <!--</RadioGroup>-->
+            <Button
+                android:visibility="gone"
+                android:id="@+id/listFavButton"
+                android:text="list"
                 android:layout_gravity="center_vertical"
-                android:id="@+id/radioGroup1"
-
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:drawable/toast_frame"
-                android:orientation="horizontal" >
+                android:layout_width="wrap_content" />
 
-                <RadioButton
-                    android:id="@+id/chooser128"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="128" />
-
-                <RadioButton
-                    android:id="@+id/chooser64"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:text="64" />
-            </RadioGroup>
         </LinearLayout>
     </LinearLayout>
 

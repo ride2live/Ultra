@@ -15,38 +15,57 @@ public final class R {
         public static final int button_background_stop=0x7f020001;
         public static final int exp_play=0x7f020002;
         public static final int ic_launcher=0x7f020003;
-        public static final int ultra_logo=0x7f020004;
-        public static final int ultra_logo_24=0x7f020005;
-        public static final int ultra_logo_notify=0x7f020006;
+        public static final int ultra_400400=0x7f020004;
+        public static final int ultra_logo=0x7f020005;
+        public static final int ultra_logo_24=0x7f020006;
+        public static final int ultra_logo_notify=0x7f020007;
     }
     public static final class id {
-        public static final int artistLabel=0x7f060010;
-        public static final int artistTextFragment=0x7f060003;
-        public static final int chooser128=0x7f06000b;
-        public static final int chooser64=0x7f06000c;
-        public static final int fragmenthuagment=0x7f060002;
-        public static final int imageView1=0x7f060013;
-        public static final int imageViewArt=0x7f060005;
-        public static final int logoview=0x7f060000;
-        public static final int playback_controls=0x7f06000f;
-        public static final int progressFragment=0x7f060009;
-        public static final int radioGroup1=0x7f06000a;
-        public static final int sstopInFragment=0x7f060008;
-        public static final int startInFragment=0x7f060007;
-        public static final int statusInfoFragment=0x7f060006;
-        public static final int stopButton=0x7f060012;
-        public static final int trackLabel=0x7f060011;
-        public static final int trackTextFragment=0x7f060004;
-        public static final int ultra_logo=0x7f060001;
-        public static final int updateTeletypeButton=0x7f06000d;
-        public static final int webTeletype=0x7f06000e;
+        public static final int artistLabel=0x7f070017;
+        public static final int artistTextFragment=0x7f07000a;
+        public static final int chooser128=0x7f070006;
+        public static final int chooser192=0x7f070005;
+        public static final int chooser64=0x7f070007;
+        public static final int deleteRowButton=0x7f07001b;
+        public static final int favListView=0x7f070008;
+        public static final int favoritesButtonOff=0x7f07000c;
+        public static final int favoritesButtonOn=0x7f07000d;
+        public static final int fragmentHolder=0x7f070003;
+        public static final int imageView1=0x7f07001c;
+        public static final int imageViewArt=0x7f07000e;
+        public static final int listFavButton=0x7f070013;
+        public static final int logoview=0x7f070001;
+        public static final int main_activity_relative=0x7f070000;
+        public static final int main_player_linear=0x7f070009;
+        public static final int menu_item_favorites=0x7f07001e;
+        public static final int menu_item_stream_select=0x7f07001d;
+        public static final int menu_load_art=0x7f07001f;
+        public static final int playback_controls=0x7f070016;
+        public static final int progressFragment=0x7f070012;
+        public static final int radioGroupStreams=0x7f070004;
+        public static final int sstopInFragment=0x7f070011;
+        public static final int startInFragment=0x7f070010;
+        public static final int statusInfoFragment=0x7f07000f;
+        public static final int stopButton=0x7f070019;
+        public static final int test=0x7f07001a;
+        public static final int trackLabel=0x7f070018;
+        public static final int trackTextFragment=0x7f07000b;
+        public static final int ultra_logo=0x7f070002;
+        public static final int updateTeletypeButton=0x7f070014;
+        public static final int webTeletype=0x7f070015;
     }
     public static final class layout {
         public static final int activity_main_ultra=0x7f030000;
-        public static final int fragment_player=0x7f030001;
-        public static final int fragment_teletype=0x7f030002;
-        public static final int playback_controls=0x7f030003;
-        public static final int splash_activity=0x7f030004;
+        public static final int fragment_dialog_streams=0x7f030001;
+        public static final int fragment_favlist=0x7f030002;
+        public static final int fragment_player=0x7f030003;
+        public static final int fragment_teletype=0x7f030004;
+        public static final int playback_controls=0x7f030005;
+        public static final int row_fav_list=0x7f030006;
+        public static final int splash_activity=0x7f030007;
+    }
+    public static final class menu {
+        public static final int menu_ultra=0x7f060000;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
@@ -56,8 +75,9 @@ public final class R {
         public static final int hello_world=0x7f040004;
         public static final int playing=0x7f040005;
         public static final int stopped=0x7f040006;
-        public static final int unavailable=0x7f040007;
-        public static final int volume=0x7f040008;
+        public static final int stopping=0x7f040007;
+        public static final int unavailable=0x7f040008;
+        public static final int volume=0x7f040009;
     }
     public static final class style {
         /** 

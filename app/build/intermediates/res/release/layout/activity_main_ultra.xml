@@ -4,8 +4,10 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:background="#303030"
-    tools:context="${relativePackage}.${activityClass}" >
+    tools:context="${relativePackage}.${activityClass}"
+    android:id="@+id/main_activity_relative">
         <LinearLayout
+            android:visibility="gone"
            android:id="@+id/logoview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,20 +28,21 @@
                 android:layout_height="3dp"
                 android:background="@android:color/holo_blue_light" />
         </LinearLayout>
-        
-           <fragment android:name="com.fallen.ultra.fragments.FragmentPlayer"
-               android:layout_below="@+id/logoview"
-              android:id="@+id/fragmenthuagment"
-             
-              android:layout_width="fill_parent"
-              android:layout_height="match_parent"
-               />
-            />
+
+    <FrameLayout
+        android:id="@+id/fragmentHolder"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </FrameLayout>
+
    <!-- <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-    </android.support.v4.view.ViewPager> --> 
+    </android.support.v4.view.ViewPager> -->
     
 
 </RelativeLayout><!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio/app/src/main/res/layout/activity_main_ultra.xml -->

@@ -13,10 +13,18 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 	xmlns:android
 		ADDED from AndroidManifest.xml:2:11
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from AndroidManifest.xml:6:1
+	android:name
+		ADDED from AndroidManifest.xml:6:18
 uses-permission#android.permission.INTERNET
 ADDED from AndroidManifest.xml:7:5
 	android:name
 		ADDED from AndroidManifest.xml:7:22
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from AndroidManifest.xml:8:5
+	android:name
+		ADDED from AndroidManifest.xml:8:22
 uses-sdk
 ADDED from AndroidManifest.xml:9:5
 MERGED from com.android.support:support-v4:21.0.3:15:5
@@ -28,70 +36,68 @@ MERGED from com.android.support:support-v4:21.0.3:15:5
 		ADDED from AndroidManifest.xml:10:9
 		INJECTED from AndroidManifest.xml:0:0
 		INJECTED from AndroidManifest.xml:0:0
-uses-permission#android.permission.READ_PHONE_STATE
-ADDED from AndroidManifest.xml:13:5
-	android:name
-		ADDED from AndroidManifest.xml:13:22
 application
-ADDED from AndroidManifest.xml:16:5
+ADDED from AndroidManifest.xml:12:5
 MERGED from com.android.support:support-v4:21.0.3:16:5
 	android:label
-		ADDED from AndroidManifest.xml:19:9
+		ADDED from AndroidManifest.xml:15:9
 	android:allowBackup
-		ADDED from AndroidManifest.xml:17:9
+		ADDED from AndroidManifest.xml:13:9
 	android:icon
-		ADDED from AndroidManifest.xml:18:9
+		ADDED from AndroidManifest.xml:14:9
 	android:theme
-		ADDED from AndroidManifest.xml:20:9
+		ADDED from AndroidManifest.xml:16:9
 activity#com.fallen.ultra.activities.MainUltraActivity
-ADDED from AndroidManifest.xml:21:9
+ADDED from AndroidManifest.xml:17:9
 	android:label
-		ADDED from AndroidManifest.xml:24:13
+		ADDED from AndroidManifest.xml:21:13
 	android:launchMode
-		ADDED from AndroidManifest.xml:25:13
-	android:configChanges
 		ADDED from AndroidManifest.xml:22:13
-	android:name
+	android:configChanges
+		ADDED from AndroidManifest.xml:19:13
+	android:theme
 		ADDED from AndroidManifest.xml:23:13
+	android:name
+		ADDED from AndroidManifest.xml:20:13
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from AndroidManifest.xml:27:13
+ADDED from AndroidManifest.xml:25:13
 action#android.intent.action.MAIN
+ADDED from AndroidManifest.xml:26:17
+	android:name
+		ADDED from AndroidManifest.xml:26:25
+category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:28:17
 	android:name
-		ADDED from AndroidManifest.xml:28:25
-category#android.intent.category.LAUNCHER
-ADDED from AndroidManifest.xml:30:17
-	android:name
-		ADDED from AndroidManifest.xml:30:27
+		ADDED from AndroidManifest.xml:28:27
 activity#com.fallen.ultra.activities.SplashActivity
-ADDED from AndroidManifest.xml:33:9
+ADDED from AndroidManifest.xml:31:9
 	android:noHistory
-		ADDED from AndroidManifest.xml:35:13
-	android:theme
-		ADDED from AndroidManifest.xml:36:13
-	android:name
 		ADDED from AndroidManifest.xml:34:13
+	android:theme
+		ADDED from AndroidManifest.xml:35:13
+	android:name
+		ADDED from AndroidManifest.xml:33:13
 receiver#com.fallen.ultra.listeners.IncomingCallReciever
-ADDED from AndroidManifest.xml:39:9
+ADDED from AndroidManifest.xml:38:9
 	android:name
-		ADDED from AndroidManifest.xml:39:19
+		ADDED from AndroidManifest.xml:38:19
 intent-filter#android.intent.action.PHONE_STATE
-ADDED from AndroidManifest.xml:40:13
+ADDED from AndroidManifest.xml:39:13
 action#android.intent.action.PHONE_STATE
-ADDED from AndroidManifest.xml:41:17
+ADDED from AndroidManifest.xml:40:17
 	android:name
-		ADDED from AndroidManifest.xml:41:25
+		ADDED from AndroidManifest.xml:40:25
 receiver#com.fallen.ultra.listeners.NoisyReceiver
-ADDED from AndroidManifest.xml:44:9
+ADDED from AndroidManifest.xml:43:9
 	android:name
-		ADDED from AndroidManifest.xml:44:19
+		ADDED from AndroidManifest.xml:43:19
 intent-filter#android.media.AUDIO_BECOMING_NOISY
-ADDED from AndroidManifest.xml:45:13
+ADDED from AndroidManifest.xml:44:13
 action#android.media.AUDIO_BECOMING_NOISY
-ADDED from AndroidManifest.xml:46:17
+ADDED from AndroidManifest.xml:45:17
 	android:name
-		ADDED from AndroidManifest.xml:46:25
+		ADDED from AndroidManifest.xml:45:25
 service#com.fallen.ultra.services.UltraPlayerService
-ADDED from AndroidManifest.xml:50:9
+ADDED from AndroidManifest.xml:49:9
 	android:name
-		ADDED from AndroidManifest.xml:50:18
+		ADDED from AndroidManifest.xml:49:18
