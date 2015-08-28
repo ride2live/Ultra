@@ -19,7 +19,7 @@ public class Params {
     public static final int BUTTON_FAV_ON = 203;
     public static final int BUTTON_SHOW_LIST_FAV = 204;
 	public static final String ICY_KEY = "icy-metaint";
-	public static final String SOCKET_PORT = "8889";
+	public static final String SOCKET_PORT = "3248";
 	public static final String LOCAL_SOCKET_STREAM_IP = "http://127.0.0.1:" + SOCKET_PORT;
 	//rewrite to int an rename with including async  word
 	public static final int ACTION_SOCKET_PREACCEPT_DELAY = 300;
@@ -62,6 +62,7 @@ public class Params {
 	public static final int STATUS_SOCKET_CREATING = 505;
     public static final int STATUS_NEW_TITLE = 506;
     public static final int STATUS_STOPPING_IN_PROCESS = 507;
+    public static final int STATUS_CANCELED = 508;
 	public static final String STATUS_DESCRIPTION_NOTHING_AT_ALL = "";
 
 	public static final boolean USE_CHECKER = false;

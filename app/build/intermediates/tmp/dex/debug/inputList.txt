@@ -1,4 +1,5 @@
-C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\classes\debug
-C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-9e7b23ba232075698c1ce43f8602f517a928c560.jar
-C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-4ff7e9d471623f987249c0508c57696b78093109.jar
-C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\debug\classes-693c2a4c59abaa8a7d8e556d246a5f6d10dc4ed6.jar
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio_back\UltraFromGitThenNonAstudio\app\build\intermediates\classes\debug
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio_back\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-9e7b23ba232075698c1ce43f8602f517a928c560.jar
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio_back\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-27683ad412eacdc081315d7ac7ccb5ed91cd030b.jar
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio_back\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\debug\classes-90e30e6999d18e317b96e277d7b7e04ec9a18a3c.jar
+C:\Users\Nolwe\AndroidStudioProjects\UltraFromGitThenNonAstudio_back\UltraFromGitThenNonAstudio\app\build\intermediates\pre-dexed\debug\classes-5e86195c2254cdc9aa279a13342f427f2369af40.jar

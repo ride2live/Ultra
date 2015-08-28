@@ -10,10 +10,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.util.Log;
 
 import com.fallen.ultra.R;
+import com.fallen.ultra.com.fallen.ultra.model.FlagStreamStatus;
 import com.fallen.ultra.services.UltraPlayerService;
 
 public abstract class UtilsUltra {
@@ -191,7 +194,7 @@ public abstract class UtilsUltra {
 		myPreferences
 				.edit()
 				.putInt(Params.KEY_PREFERENCES_QUALITY_FIELD, currentQualityKey)
-				.commit();
+				.apply();
 
 	}
 
@@ -244,7 +247,8 @@ public abstract class UtilsUltra {
         myPreferences
                 .edit()
                 .putBoolean(Params.KEY_PREFERENCES_ART_ENABLED_FIELD, isEnabled)
-                .commit();
+                .apply();
+
 
 
     }
@@ -254,5 +258,23 @@ public abstract class UtilsUltra {
                 Params.KEY_PREFERENCES_ART_ENABLED_FIELD, true);
         return isEnabled;
 
+    }
+
+    public static Message createMessage (int what, Bundle bundle)
+    {
+        Message m = new Message();
+        m.what = what;
+        m.setData(bundle);
+        return m;
+    }
+    public static Message createMessage (int what, ContentValues cvsToBundle, FlagStreamStatus flag)
+    {
+        Bundle bundle =new Bundle();
+//        bundle.putParcelable(Params.KEY_CONTENT_VALUES_FROM_MESSAGE, cvsToBundle);
+//        bundle.putSerializable(Params.KEY_FLAG_FROM_MESSAGE, flag);
+        Message m = new Message();
+        m.what = what;
+        m.setData(bundle);
+        return m;
     }
 }

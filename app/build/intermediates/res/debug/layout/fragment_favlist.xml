@@ -8,4 +8,4 @@
            android:id="@+id/favListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>
-</LinearLayout><!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio/app/src/main/res/layout/fragment_favlist.xml -->
+</LinearLayout><!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio_back/UltraFromGitThenNonAstudio/app/src/main/res/layout/fragment_favlist.xml -->

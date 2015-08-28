@@ -2,10 +2,12 @@ package com.fallen.ultra.com.fallen.ultra.model;
 
 import com.fallen.ultra.utils.Params;
 
+import java.io.Serializable;
+
 /**
  * Created by Nolwe on 15.04.2015.
  */
-public class TempAsyncStatus {
+public class TempAsyncStatus implements Serializable {
     private int status = Params.STATUS_NONE;
     private String artist = null;
     private String track = null;

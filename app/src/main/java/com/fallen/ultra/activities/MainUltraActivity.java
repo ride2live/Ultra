@@ -1,6 +1,6 @@
 package com.fallen.ultra.activities;
 
-import android.app.Activity;
+
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +20,9 @@ import com.fallen.ultra.R;
 import com.fallen.ultra.callbacks.ActivityToFragmentFavListener;
 import com.fallen.ultra.callbacks.ActivityToFragmentPlayerListener;
 import com.fallen.ultra.callbacks.FavlistFragmentCallback;
-
 import com.fallen.ultra.callbacks.PlayerFragmentCallback;
 import com.fallen.ultra.callbacks.ServiceToActivityCallback;
 import com.fallen.ultra.com.fallen.ultra.model.StatusObjectOverall;
-import com.fallen.ultra.com.fallen.ultra.model.StatusObjectPlayer;
 import com.fallen.ultra.database.SQLiteDB;
 import com.fallen.ultra.fragments.DialogStreamsFragment;
 import com.fallen.ultra.fragments.FragmentFavList;
@@ -33,7 +32,7 @@ import com.fallen.ultra.services.UltraPlayerService.LocalPlayerBinder;
 import com.fallen.ultra.utils.Params;
 import com.fallen.ultra.utils.UtilsUltra;
 
-public class MainUltraActivity extends Activity implements
+public class MainUltraActivity extends ActionBarActivity implements
         PlayerFragmentCallback, ServiceToActivityCallback,
         FragmentManager.OnBackStackChangedListener, FavlistFragmentCallback {
     private ServiceConnection servCon;
@@ -47,6 +46,7 @@ public class MainUltraActivity extends Activity implements
     private int currentQualityKey;
     //private String currentArtist, currentTrack;
     SQLiteDB myDb;
+    android.support.v7.widget.Toolbar toolbar;
     FragmentManager manager;
     private boolean isArtEnabled = true;
 
@@ -57,6 +57,9 @@ public class MainUltraActivity extends Activity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_ultra);
+        toolbar = (android.support.v7.widget.Toolbar)findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+
         currentQualityKey = UtilsUltra.getQualityFromPreferences(getSharedPreferences(Params.KEY_PREFERENCES, 0));
         isArtEnabled = UtilsUltra.getIsArtEnabledFromPreferences(getSharedPreferences(Params.KEY_PREFERENCES,0));
         createFragmentManager();
@@ -116,8 +119,10 @@ public class MainUltraActivity extends Activity implements
                 isServiceBinded = true;
                 playerService.setCallback(MainUltraActivity.this);
                 currentStatusObjectOverall = playerService.getStatusObject();
-                mFragmentPlayerCallback.onRebindRestoreStatus(currentStatusObjectOverall);
-                System.out.println("onServiceConnected");
+                if (mFragmentPlayerCallback!=null) {
+                    mFragmentPlayerCallback.onRebindRestoreStatus(currentStatusObjectOverall);
+                    System.out.println("onServiceConnected");
+                }
             }
         };
     }
@@ -380,9 +385,8 @@ public class MainUltraActivity extends Activity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_ultra, menu);
-       MenuItem checkableMenuItem  = menu.findItem(R.id.menu_load_art);
+        MenuItem checkableMenuItem  = menu.findItem(R.id.menu_load_art);
         checkableMenuItem.setChecked(isArtEnabled);
-
         return true;
     }
 //
@@ -458,4 +462,6 @@ public class MainUltraActivity extends Activity implements
         }
 
     }
+
+
 }

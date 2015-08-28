@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/menu_item_stream_select"
         android:title="выбор стрима"
-        android:showAsAction="ifRoom"/>
+      app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_item_favorites"
         android:title="избранное"
         />
@@ -18,4 +19,4 @@ android:id="@+id/menu_load_art"
 
 
 
-</menu><!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio/app/src/main/res/menu/menu_ultra.xml -->
+</menu><!-- From: file:/C:/Users/Nolwe/AndroidStudioProjects/UltraFromGitThenNonAstudio_back/UltraFromGitThenNonAstudio/app/src/main/res/menu/menu_ultra.xml -->

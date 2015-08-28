@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.fallen.ultra.callbacks.ServiceToPlayerCallback;
@@ -66,7 +67,9 @@ public class MediaPlayerExtended extends MediaPlayer implements ServiceToPlayerC
 		if (!isPlaying())
 		{
 			try {
-				start();
+                setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
+                setAudioStreamType(AudioManager.STREAM_MUSIC);
+                start();
                 statusObjectPlayer.setPlayerStatus(Params.STATUS_PLAYING);
 		        sendPlayerCallbackToService();
 			} catch (Exception e) {

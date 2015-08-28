@@ -1,6 +1,7 @@
 package com.fallen.ultra.services;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,14 +10,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 
 import com.fallen.ultra.activities.MainUltraActivity;
 import com.fallen.ultra.async.AsyncCheckLegal;
 import com.fallen.ultra.async.AsyncImageLoader;
-import com.fallen.ultra.async.AsyncLoadStream;
+import com.fallen.ultra.async.StreamWorker;
 import com.fallen.ultra.callbacks.AsyncToServiceCallback;
 import com.fallen.ultra.callbacks.ImageLoader;
 import com.fallen.ultra.callbacks.PlayerToServiceCallBack;
@@ -37,7 +40,7 @@ public class UltraPlayerService extends Service implements
 	// private MediaPlayer mMediaPlayer;
 	private final IBinder mBinder = new LocalPlayerBinder();
 	private ServiceToActivityCallback serviceToActivityCallback;
-	private AsyncLoadStream mAsycLoadStream;
+	//private AsyncLoadStream mAsycLoadStream;
 	// object for newly binded or rebinded activities
 	private StatusObjectOverall statusOveralObject;
     private String currentArtist;
@@ -45,6 +48,9 @@ public class UltraPlayerService extends Service implements
 	private ServiceToPlayerCallback serviceToPlayerCallback;
 	private boolean isRunningBackground = false;
     private String currentQuality;
+    final UniversalUIHandler universalUIHandler = new UniversalUIHandler(this);
+    private Thread threadAsyncLoadStream;
+    private StreamWorker streamWorker;
 
     @Override
 	public IBinder onBind(Intent intent) {
@@ -61,6 +67,10 @@ public class UltraPlayerService extends Service implements
         int status = tempAsyncStatus.getStatus();
         statusOveralObject.setStatusAsync(status);
         switch (status) {
+            case Params.STATUS_CANCELED:
+                if (statusOveralObject.isRecconecting())
+                playStream();
+                break;
             case Params.STATUS_BUFFERING:
                 if (serviceToPlayerCallback != null)
                     serviceToPlayerCallback.onBuffered();
@@ -187,11 +197,18 @@ public class UltraPlayerService extends Service implements
 
         }
 
-        if (mAsycLoadStream == null) {
-            mAsycLoadStream = new AsyncLoadStream(this);
-
-            mAsycLoadStream.execute(currentQuality);
+        if (threadAsyncLoadStream == null)
+        {
+            streamWorker = new StreamWorker(universalUIHandler,currentQuality);
+            threadAsyncLoadStream = new Thread(streamWorker);
+            threadAsyncLoadStream.start();
         }
+
+//        if (mAsycLoadStream == null) {
+//            mAsycLoadStream = new AsyncLoadStream(this);
+//
+//            mAsycLoadStream.execute(currentQuality);
+//        }
     }
 	public void setNewCurrentGuality(Intent intent) {
         String qualityUrl = Params.ULTRA_URL_192;
@@ -264,16 +281,24 @@ public class UltraPlayerService extends Service implements
 				forceClose();
 		}
 
-        if (mAsycLoadStream != null) {
-			mAsycLoadStream.cancel(true);
-			mAsycLoadStream = null;
-		}
-		stoppingBackground();
+
+//        if (mAsycLoadStream != null) {
+//			mAsycLoadStream.cancel(true);
+//			mAsycLoadStream = null;
+//		}
+        if (!statusOveralObject.isRecconecting())
+		    stoppingBackground();
         TempAsyncStatus t = new TempAsyncStatus();
         t.setStatus(Params.STATUS_STOPED);
         onStatusChanged(t);
-        if (statusOveralObject!=null && statusOveralObject.isRecconecting())
-           playStream();
+        if (threadAsyncLoadStream!=null)
+        {
+            streamWorker.setCancelLoad();
+            threadAsyncLoadStream.interrupt();
+            threadAsyncLoadStream = null;
+        }
+//        if (statusOveralObject!=null && statusOveralObject.isRecconecting())
+//           playStream();
 
 	}
 
@@ -306,51 +331,6 @@ public class UltraPlayerService extends Service implements
 		//serviceToActivityCallback.onRebindStatus(statusOveralObject);
 
 	}
-
-//	@Override
-//	public void updateAsyncStatusObject(StatusObjectOverall sObject) {
-//
-//		if (sObject.isAsync()) {
-//			int status = sObject.getStatusAsync();
-//			switch (status) {
-//			case Params.STATUS_BUFFERING:
-//				if (serviceToPlayerCallback != null)
-//					serviceToPlayerCallback.onBuffered();
-//				statusOveralObject.setStatusAsync(status);
-//				createNotify();
-//				break;
-//			case Params.STATUS_NEW_TITLE:
-//
-//				currentArtist = sObject.getArtist();
-//				currentTrack = sObject.getTrack();
-//				loadImage(currentArtist, currentTrack);
-//				statusOveralObject.setArtist(currentArtist);
-//				statusOveralObject.setTrack(currentTrack);
-//				updateNotify();
-//				break;
-//			case Params.STATUS_SOCKET_CREATING:
-//				UtilsUltra.printLog("status socket created recieved");
-//				new Handler().postDelayed(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						if (serviceToPlayerCallback != null)
-//							serviceToPlayerCallback.onSocketCreated();
-//					}
-//				}, 1000);
-//				break;
-//			case Params.STATUS_STREAM_ENDS:
-//				statusOveralObject.setPlayerStatus(Params.STATUS_STOPED);
-//				stopStream();
-//
-//			default:
-//				break;
-//			}
-//		} else {
-//			int status = sObject.getPlayerStatus();
-//			statusOveralObject.setPlayerStatus(status);
-//		}
-//	}
 
 	private void loadImage(String artist, String track) {
         if (!UtilsUltra.getIsArtEnabledFromPreferences(getSharedPreferences(Params.KEY_PREFERENCES ,0)))
@@ -393,5 +373,21 @@ public class UltraPlayerService extends Service implements
 		// TODO Auto-generated method stub
 		UtilsUltra.printLog("RECIEVE PHONE CALL " + action);
 	}
+    public static class UniversalUIHandler extends Handler {
+        UltraPlayerService ultraPlayerService;
+        private final WeakReference<UltraPlayerService> serviceWeakRef;
+        public UniversalUIHandler(UltraPlayerService portalActivity) {
+            serviceWeakRef = new WeakReference<>(portalActivity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle bundle = msg.getData();
+            TempAsyncStatus tempAsyncStatus = (TempAsyncStatus) bundle.getSerializable("status");
+            serviceWeakRef.get().onStatusChanged(tempAsyncStatus);
+        }
+
+    }
 
 }
